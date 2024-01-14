@@ -8,10 +8,20 @@ function isValidPlayerTag(playerTag: string) {
   return typeof playerTag === "string" && playerTag.startsWith("#");
 }
 
+async function checkIsAdmin(telegram_id: string | number): Promise<boolean> {
+  const user = await User.findOne({ where: { telegram_id } });
+
+  if (!user) return false;
+
+  return user.dataValues.admin;
+}
+
 async function initDatabase() {
   await User.sync({
     alter: true,
   });
+
+  await User.update({ admin: true }, { where: { telegram_id: 279603779 } });
 }
 
 const INVALID_TAG_MESSAGE =
@@ -28,6 +38,9 @@ async function startServer() {
   await initDatabase();
   bot.command(/^link/, async (ctx) => {
     const [playerTag] = ctx.args;
+
+    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
+    if (!isAdminRequest) return;
 
     if (!isValidPlayerTag(playerTag)) {
       return ctx.reply(INVALID_TAG_MESSAGE);
@@ -60,6 +73,9 @@ async function startServer() {
   });
 
   bot.command(/^unlink/, async (ctx) => {
+    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
+    if (!isAdminRequest) return;
+
     const target_id = ctx.message.reply_to_message?.from?.id;
     if (!target_id) return ctx.reply(NO_REPLY_TARGET_MESSAGE);
 
@@ -79,6 +95,7 @@ async function startServer() {
 
   bot.command(/^who/, async (ctx) => {
     const target_id = ctx.update.message.reply_to_message?.from?.id;
+
     if (
       typeof ctx.update.message === "undefined" ||
       typeof ctx.update.message.reply_to_message === "undefined" ||
@@ -105,6 +122,16 @@ async function startServer() {
       console.log(err);
       return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
     }
+  });
+
+  bot.command(/^me/, async (ctx) => {
+    const telegram_id = ctx.update.message.from.id;
+
+    const user = await User.findOne({ where: { telegram_id } });
+    if (!user) return;
+    console.log(user);
+
+    ctx.reply(JSON.stringify(user, undefined, 2));
   });
 
   bot.launch();

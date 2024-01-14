@@ -11,6 +11,10 @@ const User = db.define("User", {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  admin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  }
 });
 
 export { User };

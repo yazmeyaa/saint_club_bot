@@ -18,7 +18,6 @@ class Players {
         const url = this.baseUrl + `${encodeURIComponent(playerTag)}`
 
         try {
-            console.log(">>>>>>>>>>>URL :", url)
             const response = await axios.get<Player>(url, config);
 
             if (!response.data) throw new Error(`Player with tag ${playerTag} is not found`)

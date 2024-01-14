@@ -1,6 +1,8 @@
 import "./paths";
 import { bot } from "./modules";
 import { User } from "@models/user";
+import { brawlStarsService } from "@services/brawl-stars";
+import { templatesBS } from "@templates/brawl-stars";
 
 function isValidPlayerTag(playerTag: string) {
   return typeof playerTag === "string" && playerTag.startsWith("#");
@@ -16,6 +18,11 @@ const INVALID_TAG_MESSAGE =
   'Тэг пользователя введён неверно. Правильный формат: "#XXXXXXXX"';
 const NO_REPLY_TARGET_MESSAGE =
   "Команду нужно использовать в ответ на сообщение";
+const NOT_FOUND_USER_MESSAGE = "Пользователь не найден";
+const NOT_LINKED_USER_MESSAGE = "К пользователю не привязан тэг";
+const CANNOT_GET_PROFILE_DATA_MESSAGE = "Не удалось получить данные об игроке";
+const COMMAND_EXECUTED_MESSAGE = "Команда успешно выполнена!";
+const COMMAND_NOT_EXECUTE_MESSAGE = "Не удалось выполнить команду.";
 
 async function startServer() {
   await initDatabase();
@@ -27,26 +34,28 @@ async function startServer() {
     }
 
     //forum_topic_created
-    console.log(ctx);
+    console.log(ctx.update.message);
     if (
-      typeof ctx.message.reply_to_message === "undefined" ||
-      typeof ctx.message.reply_to_message.from === "undefined"
+      typeof ctx.update.message === "undefined" ||
+      typeof ctx.update.message.reply_to_message === "undefined" ||
+      typeof ctx.update.message.reply_to_message.from === "undefined" ||
+      "forum_topic_created" in ctx.update.message.reply_to_message
     ) {
       return ctx.reply(NO_REPLY_TARGET_MESSAGE);
     }
 
-    const targetId = ctx.message.reply_to_message.from.id;
+    const targetId = ctx.update.message.reply_to_message.from.id;
 
     try {
-      User.upsert({
-        telegram_id: targetId,
+      await User.upsert({
+        telegram_id: targetId.toString(),
         player_tag: playerTag,
       });
 
-      ctx.reply("Команда успешно выполнена!");
+      ctx.reply(COMMAND_EXECUTED_MESSAGE);
     } catch (err) {
       console.error(err);
-      ctx.reply("Не удалось выполнить команду. :(");
+      ctx.reply(COMMAND_NOT_EXECUTE_MESSAGE);
     }
   });
 
@@ -67,7 +76,37 @@ async function startServer() {
 
     ctx.reply("ok");
   });
-  
+
+  bot.command(/^who/, async (ctx) => {
+    const target_id = ctx.update.message.reply_to_message?.from?.id;
+    if (
+      typeof ctx.update.message === "undefined" ||
+      typeof ctx.update.message.reply_to_message === "undefined" ||
+      typeof ctx.update.message.reply_to_message.from === "undefined" ||
+      "forum_topic_created" in ctx.update.message.reply_to_message
+    ) {
+      return ctx.reply(NO_REPLY_TARGET_MESSAGE);
+    }
+    console.log({ reply: ctx.update.message.reply_to_message });
+
+    const user = await User.findOne({ where: { telegram_id: target_id } });
+
+    if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
+    if (user.dataValues.player_tag === null)
+      return ctx.reply(NOT_LINKED_USER_MESSAGE);
+
+    try {
+      const playerData = await brawlStarsService.players.getPlayerInfo(
+        user.dataValues.player_tag
+      );
+
+      ctx.reply(templatesBS("profile", playerData));
+    } catch (err) {
+      console.log(err);
+      return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
+    }
+  });
+
   bot.launch();
 }
 

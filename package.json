@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "cross-env NODE_ENV=prod node dist/index.js",
     "dev": "cross-env NODE_ENV=dev nodemon src/index.ts",
-    "db": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "",

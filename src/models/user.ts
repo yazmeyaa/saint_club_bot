@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class User extends BaseEntity {
-  @Column("integer", { unique: true, primary: true })
+  @PrimaryColumn("integer", { unique: true, primary: true })
   telegram_id: number;
 
   @Column("text", { nullable: true, default: null })

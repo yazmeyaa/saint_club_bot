@@ -1,5 +1,7 @@
+import "./paths";
 import { User } from "@models/user";
 import { existsSync, mkdirSync } from "fs";
+import { Initdatabase1705350896162 } from "./migrations/1705350896162-initdatabase";
 import { homedir } from "os";
 import { join } from "path";
 import { DataSource } from "typeorm";
@@ -17,7 +19,7 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: true,
   subscribers: [],
-  migrations: [],
+  migrations: [Initdatabase1705350896162],
   entities: [User],
 });
 

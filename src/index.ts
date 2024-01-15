@@ -7,6 +7,7 @@ import { templatesBS } from "@templates/brawl-stars";
 import { AppDataSource } from "./data-source";
 import { ClubMemberListReponseType } from "types/brawlstars/club";
 import createMention from "@helpers/createMention";
+import { In } from "typeorm";
 
 function isValidPlayerTag(playerTag: string) {
   return typeof playerTag === "string" && playerTag.startsWith("#");
@@ -32,8 +33,18 @@ async function transformClubMembers(
 ): Promise<string> {
   const membersStrings: string[] = [];
 
+  const membersTags = members.items.map((item) => item.tag);
+
+  const findMembers = await User.find({
+    where: {
+      player_tag: In(membersTags),
+    },
+  });
+
+  console.log({ findMembers });
+
   for (const member of members.items) {
-    const user = await User.findOne({ where: { player_tag: member.tag } });
+    const user = findMembers.find((item) => item.player_tag === member.tag);
     if (user) membersStrings.push(createMention(member.name, user.telegram_id));
     else membersStrings.push(member.name);
   }

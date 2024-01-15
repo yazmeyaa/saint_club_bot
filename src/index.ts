@@ -5,6 +5,8 @@ import { User } from "@models/user";
 import { brawlStarsService } from "@services/brawl-stars";
 import { templatesBS } from "@templates/brawl-stars";
 import { AppDataSource } from "./data-source";
+import { ClubMemberListReponseType } from "types/brawlstars/club";
+import createMention from "@helpers/createMention";
 
 function isValidPlayerTag(playerTag: string) {
   return typeof playerTag === "string" && playerTag.startsWith("#");
@@ -23,6 +25,20 @@ async function initDatabase() {
   const user = await User.findOne({ where: { telegram_id: 279603779 } });
   if (user) User.update({ telegram_id: user.telegram_id }, { admin: true });
   else User.insert({ telegram_id: 279603779, admin: true });
+}
+
+async function transformClubMembers(
+  members: ClubMemberListReponseType
+): Promise<string> {
+  const membersStrings: string[] = [];
+
+  for (const member of members.items) {
+    const user = await User.findOne({ where: { player_tag: member.tag } });
+    if (user) membersStrings.push(createMention(member.name, user.telegram_id));
+    else membersStrings.push(member.name);
+  }
+
+  return membersStrings.join("\n");
 }
 
 const INVALID_TAG_MESSAGE =
@@ -121,6 +137,35 @@ async function startServer() {
       console.log(err);
       return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
     }
+  });
+
+  bot.command(/^club_list/, async (ctx) => {
+    const telegram_id = ctx.update.message.from.id;
+    const user = await User.findOne({ where: { telegram_id } });
+
+    if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
+    if (!user.player_tag) return ctx.reply(NOT_LINKED_USER_MESSAGE);
+    const userData = await brawlStarsService.players.getPlayerInfo(
+      user.player_tag
+    );
+    if (!userData.club) return ctx.reply("Пользователь не состоит в клубе");
+    const clubData = await brawlStarsService.clubs.getClanInfo(
+      userData.club.tag
+    );
+
+    const members = await brawlStarsService.clubs.getClanMembers(
+      userData.club.tag
+    );
+
+    const clubMembersTxt = await transformClubMembers(members);
+
+    const msg = `Клуб: ${clubData.name}
+Всего кубков: ${clubData.trophies}
+
+Участники:
+${clubMembersTxt}`;
+
+    return ctx.reply(msg, { parse_mode: "Markdown" });
   });
 
   bot.command(/^me/, async (ctx) => {

@@ -2,6 +2,14 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
+    "composite": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "pretty": true,
+    "sourceMap": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "rootDir": "./src",
@@ -10,35 +18,18 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
+    "strictPropertyInitialization": false,
     "paths": {
-      "types/*": [
-        "./types/*"
-      ],
-      "@services/*": [
-        "./services/*"
-      ],
-      "@config/*": [
-        "./config/*"
-      ],
-      "@helpers/*": [
-        "./helpers/*"
-      ],
-      "@templates/*": [
-        "./templates/*"
-      ],
-      "@models/*": [
-        "./models/*"
-      ],
-      "@modules/*": [
-        "./modules/*"
-      ],
+      "types/*": ["./types/*"],
+      "@services/*": ["./services/*"],
+      "@config/*": ["./config/*"],
+      "@helpers/*": ["./helpers/*"],
+      "@templates/*": ["./templates/*"],
+      "@models/*": ["./models/*"],
+      "@modules/*": ["./modules/*"]
     },
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,27 +1,28 @@
+import "reflect-metadata";
 import "./paths";
 import { bot } from "./modules";
 import { User } from "@models/user";
 import { brawlStarsService } from "@services/brawl-stars";
 import { templatesBS } from "@templates/brawl-stars";
+import { AppDataSource } from "./data-source";
 
 function isValidPlayerTag(playerTag: string) {
   return typeof playerTag === "string" && playerTag.startsWith("#");
 }
 
-async function checkIsAdmin(telegram_id: string | number): Promise<boolean> {
-  const user = await User.findOne({ where: { telegram_id } });
+async function checkIsAdmin(telegram_id: number): Promise<boolean> {
+  const user = await User.findOne({ where: { telegram_id: telegram_id } });
 
   if (!user) return false;
 
-  return user.dataValues.admin;
+  return user.admin;
 }
 
 async function initDatabase() {
-  await User.sync({
-    alter: true,
-  });
-
-  await User.update({ admin: true }, { where: { telegram_id: 279603779 } });
+  await AppDataSource.initialize();
+  const user = await User.findOne({ where: { telegram_id: 279603779 } });
+  if (user) User.update({ telegram_id: user.telegram_id }, { admin: true });
+  else User.insert({ telegram_id: 279603779, admin: true });
 }
 
 const INVALID_TAG_MESSAGE =
@@ -47,7 +48,6 @@ async function startServer() {
     }
 
     //forum_topic_created
-    console.log(ctx.update.message);
     if (
       typeof ctx.update.message === "undefined" ||
       typeof ctx.update.message.reply_to_message === "undefined" ||
@@ -60,10 +60,14 @@ async function startServer() {
     const targetId = ctx.update.message.reply_to_message.from.id;
 
     try {
-      await User.upsert({
-        telegram_id: targetId.toString(),
-        player_tag: playerTag,
-      });
+      const user = await User.findOne({ where: { telegram_id: targetId } });
+
+      if (user)
+        await User.update(
+          { telegram_id: user.telegram_id },
+          { player_tag: playerTag }
+        );
+      else await User.insert({ telegram_id: targetId, player_tag: playerTag });
 
       ctx.reply(COMMAND_EXECUTED_MESSAGE);
     } catch (err) {
@@ -81,12 +85,10 @@ async function startServer() {
 
     await User.update(
       {
-        player_tag: null,
+        telegram_id: target_id,
       },
       {
-        where: {
-          telegram_id: target_id,
-        },
+        player_tag: null,
       }
     );
 
@@ -95,7 +97,6 @@ async function startServer() {
 
   bot.command(/^who/, async (ctx) => {
     const target_id = ctx.update.message.reply_to_message?.from?.id;
-
     if (
       typeof ctx.update.message === "undefined" ||
       typeof ctx.update.message.reply_to_message === "undefined" ||
@@ -104,17 +105,15 @@ async function startServer() {
     ) {
       return ctx.reply(NO_REPLY_TARGET_MESSAGE);
     }
-    console.log({ reply: ctx.update.message.reply_to_message });
 
     const user = await User.findOne({ where: { telegram_id: target_id } });
 
     if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
-    if (user.dataValues.player_tag === null)
-      return ctx.reply(NOT_LINKED_USER_MESSAGE);
+    if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
     try {
       const playerData = await brawlStarsService.players.getPlayerInfo(
-        user.dataValues.player_tag
+        user.player_tag
       );
 
       ctx.reply(templatesBS("profile", playerData));
@@ -129,7 +128,6 @@ async function startServer() {
 
     const user = await User.findOne({ where: { telegram_id } });
     if (!user) return;
-    console.log(user);
 
     ctx.reply(JSON.stringify(user, undefined, 2));
   });

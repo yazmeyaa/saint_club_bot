@@ -1,20 +1,13 @@
-import { db } from "@modules/sequelize";
-import { DataTypes } from "sequelize";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 
-const User = db.define("User", {
-  telegram_id: {
-    type: DataTypes.TEXT,
-    unique: true,
-    primaryKey: true
-  },
-  player_tag: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  admin: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  }
-});
+@Entity()
+export class User extends BaseEntity {
+  @Column("integer", { unique: true, primary: true })
+  telegram_id: number;
 
-export { User };
+  @Column("text", { nullable: true, default: null })
+  player_tag: string | null = null;
+
+  @Column("boolean", { default: false })
+  admin: boolean;
+}

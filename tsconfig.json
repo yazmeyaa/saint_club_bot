@@ -26,7 +26,8 @@
       "@helpers/*": ["./helpers/*"],
       "@templates/*": ["./templates/*"],
       "@models/*": ["./models/*"],
-      "@modules/*": ["./modules/*"]
+      "@modules/*": ["./modules/*"],
+      "@commands/*": ["./commands/*"]
     },
     "skipLibCheck": true
   },

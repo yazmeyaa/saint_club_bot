@@ -5,38 +5,40 @@ import { environments } from "@config/env";
 import { Brawlers } from "./brawlers";
 import { Events } from "./events";
 import { Rankings } from "./rankings";
+import { Icons } from "./icons";
 
 export class BrawlStarsService {
-    private baseHeaders: AxiosHeaders
-    private baseUrl = "https://api.brawlstars.com/v1";
+  private baseHeaders: AxiosHeaders;
+  private baseUrl = "https://api.brawlstars.com/v1";
 
-    players: Players
-    clubs: Clubs
-    brawlers: Brawlers
-    events: Events
-    rankings: Rankings
+  players: Players;
+  clubs: Clubs;
+  brawlers: Brawlers;
+  events: Events;
+  rankings: Rankings;
+  icons: Icons;
 
-    constructor(apiKey: string) {
-        if (!apiKey) throw new Error("NO BRAWL_API_KEY PROVIDED ");
-        this.baseHeaders = new AxiosHeaders({
-            Authorization: `Bearer ${apiKey}`,
-        })
-        this.players = new Players(this)
-        this.clubs = new Clubs(this)
-        this.brawlers = new Brawlers(this)
-        this.events = new Events(this)
-        this.rankings = new Rankings(this)
-    }
+  constructor(apiKey: string) {
+    if (!apiKey) throw new Error("NO BRAWL_API_KEY PROVIDED ");
+    this.baseHeaders = new AxiosHeaders({
+      Authorization: `Bearer ${apiKey}`,
+    });
+    this.players = new Players(this);
+    this.clubs = new Clubs(this);
+    this.brawlers = new Brawlers(this);
+    this.events = new Events(this);
+    this.rankings = new Rankings(this);
+    this.icons = new Icons(this);
+  }
 
-    getHeaders() {
-        return this.baseHeaders
-    }
+  getHeaders() {
+    return this.baseHeaders;
+  }
 
-    getUrl() {
-        return this.baseUrl
-    }
-
+  getUrl() {
+    return this.baseUrl;
+  }
 }
 
-const { bwarlstars_api_key } = environments
-export const brawlStarsService = new BrawlStarsService(bwarlstars_api_key)
+const { bwarlstars_api_key } = environments;
+export const brawlStarsService = new BrawlStarsService(bwarlstars_api_key);

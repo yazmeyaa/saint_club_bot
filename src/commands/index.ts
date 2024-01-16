@@ -99,7 +99,18 @@ brawlStarsComposer.command(/^who/, async (ctx) => {
       user.player_tag
     );
 
-    ctx.reply(templatesBS("profile", playerData));
+    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
+
+    if (icon) {
+      return ctx.replyWithPhoto(icon, {
+        caption: templatesBS("profile", playerData),
+        parse_mode: "Markdown",
+      });
+    } else {
+      ctx.reply(templatesBS("profile", playerData), {
+        parse_mode: "Markdown",
+      });
+    }
   } catch (err) {
     console.log(err);
     return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);

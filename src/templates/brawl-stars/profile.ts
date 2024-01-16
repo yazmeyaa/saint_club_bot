@@ -1,20 +1,12 @@
 import { Player } from "types/brawlstars";
 
-export function template_BS_profile(profile: Player): string {
-  const {
-    name,
-    tag,
-    trophies,
-    club,
-    "3vs3Victories": wins3v3,
-    highestTrophies,
-    soloVictories,
-  } = profile;
-  return `🫠Имя: ${name}
-#️⃣Тэг: ${tag}
-🏆Трофеи: ${trophies}
-🏆Максимум трофеев: ${highestTrophies}
-👾Клуб: ${club.name}
-🥇Победы 3v3: ${wins3v3}
-🥇Победы соло: ${soloVictories}`;
-}
+export const template_BS_profile = (
+  profile: Player
+): string => `*${profile.name}* (${profile.tag})
+🎖Уровень: ${profile.expLevel} (${profile.expPoints.toLocaleString()} очков опыта)
+👾Клуб: ${profile.club.name}
+
+🏆Трофеи: ${profile.trophies} (максимум ${profile.highestTrophies})
+🥇Победы 3v3: ${profile["3vs3Victories"]}
+🥇Победы соло: ${profile.soloVictories}
+🥇Победы дуо: ${profile.duoVictories}`;

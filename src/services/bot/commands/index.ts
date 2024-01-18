@@ -68,7 +68,7 @@ brawlStarsComposer.command(/^unlink/, async (ctx) => {
   ctx.reply("ok");
 });
 
-brawlStarsComposer.command(/^who/, async (ctx) => {
+brawlStarsComposer.command(/^profile/, async (ctx) => {
   const target_id = ctx.update.message.reply_to_message?.from?.id;
   if (
     typeof ctx.update.message === "undefined" ||
@@ -111,8 +111,29 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;
 
   const user = await User.findOne({ where: { telegram_id } });
-  if (!user) return;
+  if (!user || !user.player_tag) return;
 
+  try {
+    const playerData = await brawlStarsService.players.getPlayerInfo(
+      user.player_tag
+    );
+
+    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
+
+    if (icon) {
+      return ctx.replyWithPhoto(icon, {
+        caption: templatesBS("profile", playerData),
+        parse_mode: "Markdown",
+      });
+    } else {
+      ctx.reply(templatesBS("profile", playerData), {
+        parse_mode: "Markdown",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
+  }
   ctx.reply(JSON.stringify(user, undefined, 2));
 });
 

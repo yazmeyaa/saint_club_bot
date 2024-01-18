@@ -1,6 +1,5 @@
 export type BattleLogResponse = {
     items: Array<BattleResult>
-
 }
 
 export type BattleResult = {

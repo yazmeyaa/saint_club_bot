@@ -1,5 +1,5 @@
 import { AxiosHeaders } from "axios";
-import { Clubs } from "./clubs";
+import { Clubs, GetClanMembersOptions } from "./clubs";
 import { Players } from "./players";
 import { environments } from "@config/env";
 import { Brawlers } from "./brawlers";
@@ -11,12 +11,12 @@ export class BrawlStarsService {
   private baseHeaders: AxiosHeaders;
   private baseUrl = "https://api.brawlstars.com/v1";
 
-  players: Players;
-  clubs: Clubs;
-  brawlers: Brawlers;
-  events: Events;
-  rankings: Rankings;
-  icons: Icons;
+  public readonly players: Players;
+  public readonly clubs: Clubs;
+  public readonly brawlers: Brawlers;
+  public readonly events: Events;
+  public readonly rankings: Rankings;
+  public readonly icons: Icons;
 
   constructor(apiKey: string) {
     if (!apiKey) throw new Error("NO BRAWL_API_KEY PROVIDED ");

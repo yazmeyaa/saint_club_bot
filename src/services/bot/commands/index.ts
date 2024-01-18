@@ -94,7 +94,7 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
     );
 
     const trophiesDifferent = playerBattleLog.items.reduce(
-      (acc, curr) => (acc += curr.battle.trophyChange),
+      (acc, curr) => (acc += (curr.battle.trophyChange ?? 0)),
       0
     );
 
@@ -134,7 +134,7 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
     );
 
     const trophiesDifferent = playerBattleLog.items.reduce(
-      (acc, curr) => (acc += curr.battle.trophyChange),
+      (acc, curr) => (acc += (curr.battle.trophyChange ?? 0)),
       0
     );
     console.log({ trophiesDifferent });

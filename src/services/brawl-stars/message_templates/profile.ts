@@ -22,7 +22,6 @@ export const template_BS_profile = (
 
   return [
     header,
-    exp,
     level,
     club,
     "",

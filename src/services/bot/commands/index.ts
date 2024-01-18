@@ -89,11 +89,20 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
       user.player_tag
     );
 
+    const playerBattleLog = await brawlStarsService.players.getPlayerBattleLog(
+      user.player_tag
+    );
+
+    const trophiesDifferent = playerBattleLog.items.reduce(
+      (acc, curr) => (acc += curr.battle.trophyChange),
+      0
+    );
+
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData),
+        caption: templatesBS("profile", playerData, trophiesDifferent),
         parse_mode: "Markdown",
       });
     } else {
@@ -120,13 +129,23 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
 
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
+    const playerBattleLog = await brawlStarsService.players.getPlayerBattleLog(
+      user.player_tag
+    );
+
+    const trophiesDifferent = playerBattleLog.items.reduce(
+      (acc, curr) => (acc += curr.battle.trophyChange),
+      0
+    );
+    console.log({ trophiesDifferent });
+
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData),
+        caption: templatesBS("profile", playerData, trophiesDifferent),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData), {
+      ctx.reply(templatesBS("profile", playerData, trophiesDifferent), {
         parse_mode: "Markdown",
       });
     }

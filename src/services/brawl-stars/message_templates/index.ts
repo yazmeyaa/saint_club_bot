@@ -16,7 +16,7 @@ const templatesMap = {
 
 type TemplateFunction = typeof templatesMap;
 type KeyofTemplates = keyof TemplateFunction;
-type PayloadType<T extends KeyofTemplates> = Parameters<TemplateFunction[T]>[0];
+type PayloadType<T extends KeyofTemplates> = Parameters<TemplateFunction[T]>;
 
 /**
  * Recieve key of template (template name) and need payload for this template and returns message template string.
@@ -31,11 +31,12 @@ type PayloadType<T extends KeyofTemplates> = Parameters<TemplateFunction[T]>[0];
  */
 export function templatesBS<K extends KeyofTemplates, P extends PayloadType<K>>(
   key: K,
-  payload: P
+  ...payload: P
 ): string {
+  console.log({payload})
   //! TS-IGNORE user cause TypeScript doesn't support this type cast.
   //! This may be solved by Reflect.apply(templatesMap[key], null, [payload])
   //! But its hard to understand.
   // @ts-ignore
-  return templatesMap[key](payload);
+  return templatesMap[key](...payload);
 }

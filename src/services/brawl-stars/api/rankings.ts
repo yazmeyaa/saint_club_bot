@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { BrawlStarsService } from "./service"
-import { ClubRankingList, PlayerRankingsList, PowerPlaySeasonList } from "types/brawlstars"
+import { ClubRankingList, PlayerRankingsList, PowerPlaySeasonList } from "@services/brawl-stars/api/types"
 
 type LimitParams = {
     before?: string

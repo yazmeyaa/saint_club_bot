@@ -1,4 +1,4 @@
-import { BaseBrawler, BrawlersResponseType } from "types/brawlstars/player"
+import { BaseBrawler, BrawlersResponseType } from "@services/brawl-stars/api/types/player"
 import { BrawlStarsService } from "./service"
 import axios from "axios"
 

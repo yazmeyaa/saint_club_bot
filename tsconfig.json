@@ -26,6 +26,7 @@
       "@helpers/*": ["./helpers/*"],
       "@templates/*": ["./templates/*"],
       "@models/*": ["./models/*"],
+      "@orm/*": ["./orm/*"],
       "@modules/*": ["./modules/*"],
       "@commands/*": ["./commands/*"]
     },

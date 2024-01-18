@@ -1,4 +1,4 @@
-import { Player } from "types/brawlstars";
+import { Player } from "@services/brawl-stars/api/types";
 
 export const template_BS_profile = (
   profile: Player

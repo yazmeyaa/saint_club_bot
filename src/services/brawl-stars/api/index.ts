@@ -1,0 +1,1 @@
+export { brawlStarsService } from "./service";

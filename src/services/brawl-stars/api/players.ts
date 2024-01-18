@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { Player } from "types/brawlstars/player";
+import { Player } from "@services/brawl-stars/api/types/player";
 import { BrawlStarsService } from "./service";
-import { BattleLogResponse } from "types/brawlstars";
+import { BattleLogResponse } from "@services/brawl-stars/api/types";
 
 class Players {
     private root: BrawlStarsService

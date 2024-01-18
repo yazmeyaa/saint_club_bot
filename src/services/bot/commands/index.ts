@@ -2,7 +2,7 @@ import {
   checkIsAdmin,
   isValidPlayerTag,
   transformClubMembers,
-} from "@helpers/bot";
+} from "@services/bot/helpers";
 import { Composer, Context } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import {
@@ -14,9 +14,12 @@ import {
   NOT_LINKED_USER_MESSAGE,
   NO_REPLY_TARGET_MESSAGE,
 } from "./consts";
-import { User } from "@models/user";
-import { brawlStarsService } from "@services/brawl-stars";
-import { templatesBS } from "@templates/brawl-stars";
+import { User } from "@orm/models/user";
+import { brawlStarsService } from "@services/brawl-stars/api";
+import { templatesBS } from "@services/brawl-stars/message_templates";
+import { UserDao } from "@orm/dao/UserDao";
+
+const userDao = new UserDao();
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
@@ -43,14 +46,7 @@ brawlStarsComposer.command(/^link/, async (ctx) => {
   const targetId = ctx.update.message.reply_to_message.from.id;
 
   try {
-    const user = await User.findOne({ where: { telegram_id: targetId } });
-
-    if (user)
-      await User.update(
-        { telegram_id: user.telegram_id },
-        { player_tag: playerTag }
-      );
-    else await User.insert({ telegram_id: targetId, player_tag: playerTag });
+    await userDao.getOrCreateUser(targetId, playerTag);
 
     ctx.reply(COMMAND_EXECUTED_MESSAGE);
   } catch (err) {
@@ -135,12 +131,13 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
   const userData = await brawlStarsService.players.getPlayerInfo(
     user.player_tag
   );
-  if (!userData.club) return ctx.reply("Пользователь не состоит в клубе");
-  const clubData = await brawlStarsService.clubs.getClanInfo(userData.club.tag);
 
-  const members = await brawlStarsService.clubs.getClanMembers(
-    userData.club.tag
-  );
+  const clubData = await userDao.getUserClubInfo(telegram_id);
+  const members = await userDao.getUserClubMembers(telegram_id);
+
+  if (!members || !clubData) {
+    return ctx.reply("Пользователь не состоит в клубе");
+  }
 
   const clubMembersTxt = await transformClubMembers(members);
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BrawlStarsService } from "./service";
-import { Player } from "types/brawlstars";
+import { Player } from "@services/brawl-stars/api/types";
 
 type PlayerIcons = Record<number, PlayerIcon>;
 

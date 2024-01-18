@@ -1,4 +1,4 @@
-import { BrawlStarsClub } from "types/brawlstars";
+import { BrawlStarsClub } from "@services/brawl-stars/api/types";
 
 const clubTypeMap: Record<BrawlStarsClub['type'], string> = {
     closed: "Closed",

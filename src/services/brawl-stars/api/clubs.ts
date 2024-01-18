@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { BrawlStarsService } from "./service";
-import { BrawlStarsClub } from "types/brawlstars";
-import { ClubMemberListReponseType } from "types/brawlstars/club";
+import { BrawlStarsClub } from "@services/brawl-stars/api/types";
+import { ClubMemberListReponseType } from "@services/brawl-stars/api/types/club";
 
 export type GetClanMembersOptions = {
   before?: string;

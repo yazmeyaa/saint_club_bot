@@ -1,4 +1,4 @@
-import { SheduledEvents } from "types/brawlstars/rotation"
+import { SheduledEvents } from "@services/brawl-stars/api/types/rotation"
 import { BrawlStarsService } from "./service"
 import axios from "axios"
 

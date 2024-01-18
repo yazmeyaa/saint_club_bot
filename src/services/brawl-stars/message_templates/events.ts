@@ -1,5 +1,5 @@
 import { parseDateStringToDate } from "@helpers/date";
-import { SheduledEvents } from "types/brawlstars";
+import { SheduledEvents } from "@services/brawl-stars/api/types";
 
 export function template_BS_events(events: SheduledEvents): string {
     const convertedEventsToString = events.map(item => {

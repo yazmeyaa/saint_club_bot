@@ -1,4 +1,4 @@
-import { PlayerRankingsList } from "types/brawlstars";
+import { PlayerRankingsList } from "@services/brawl-stars/api/types";
 
 export function template_BS_brawler_rankings(rankings: PlayerRankingsList): string {
 	const formatterRankings = rankings.items.map((item) => {

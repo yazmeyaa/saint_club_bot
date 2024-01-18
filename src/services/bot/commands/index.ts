@@ -46,7 +46,9 @@ brawlStarsComposer.command(/^link/, async (ctx) => {
   const targetId = ctx.update.message.reply_to_message.from.id;
 
   try {
-    await userDao.getOrCreateUser(targetId, playerTag);
+    const user = await userDao.getOrCreateUser(targetId);
+    user.player_tag = playerTag;
+    await user.save();
 
     ctx.reply(COMMAND_EXECUTED_MESSAGE);
   } catch (err) {
@@ -61,15 +63,7 @@ brawlStarsComposer.command(/^unlink/, async (ctx) => {
 
   const target_id = ctx.message.reply_to_message?.from?.id;
   if (!target_id) return ctx.reply(NO_REPLY_TARGET_MESSAGE);
-
-  await User.update(
-    {
-      telegram_id: target_id,
-    },
-    {
-      player_tag: null,
-    }
-  );
+  await userDao.removePlayerTag(target_id);
 
   ctx.reply("ok");
 });

@@ -16,13 +16,10 @@ export class UserDao {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  public async getOrCreateUser(
-    telegram_id: number,
-    player_tag?: string
-  ): Promise<User> {
+  public async getOrCreateUser(telegram_id: number): Promise<User> {
     const existingUser = await this.userRepository.findOneBy({ telegram_id });
     if (existingUser) return existingUser;
-    return this.userRepository.save({ telegram_id, player_tag });
+    return this.userRepository.save({ telegram_id });
   }
 
   public async removePlayerTag(telegram_id: number): RemovePlayerTagResponse {

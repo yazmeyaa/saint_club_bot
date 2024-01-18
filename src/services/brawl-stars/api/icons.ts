@@ -45,7 +45,6 @@ export class Icons {
   public async getProfileIconUrl(profile: Player): Promise<string | null> {
     const response = await this.getIconsList();
     const icon = response.player[Number(profile.icon.id)];
-    console.log({ icon });
     return icon.imageUrl ?? icon.imageUrl2 ?? null;
   }
 }

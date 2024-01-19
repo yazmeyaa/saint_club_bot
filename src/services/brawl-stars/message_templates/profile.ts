@@ -24,6 +24,9 @@ export const template_BS_profile = (
   const club = profile.club ? `👾Клуб: ${profile.club.name}` : "";
   const currentTrophies = `🏆Трофеи: ${profile.trophies} (максимум ${profile.highestTrophies})`;
   const trophiesDifference = getTrophyChange(battleResults.battleLogs);
+  const trophiesDifference_day = getTrophyChange(battleResults.logs1day);
+  const trophiesDifference_week = getTrophyChange(battleResults.logs1week);
+  const trophiesDifference_month = getTrophyChange(battleResults.logs1month);
   const trophiesDiff = `🏆Изменение трофеев (25 игр): ${
     trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
   }🏆`;
@@ -31,13 +34,13 @@ export const template_BS_profile = (
   const winsAndLosesRow = `\`${getWinsAndLosesRow(battleResults.battleLogs)}\``;
 
   const trophiesDiff_day = `🏆Изменение трофеев (1 день): ${
-    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+    trophiesDifference_day > 0 ? "+" + trophiesDifference_day : trophiesDifference_day
   }🏆`;
   const trophiesDiff_week = `🏆Изменение трофеев (1 неделя): ${
-    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+    trophiesDifference_week > 0 ? "+" + trophiesDifference_week : trophiesDifference_week
   }🏆`;
   const trophiesDiff_month = `🏆Изменение трофеев (1 месяц): ${
-    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+    trophiesDifference_month > 0 ? "+" + trophiesDifference_month : trophiesDifference_month
   }🏆`;
 
   const wins3v3 = `🥇Победы 3v3: ${profile["3vs3Victories"]}`;

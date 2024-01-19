@@ -1,4 +1,4 @@
-import { User } from "@orm/models/user";
+import { User } from "@orm/models/User";
 import { ClubMemberList } from "@services/brawl-stars/api/types/club";
 import { In } from "typeorm";
 

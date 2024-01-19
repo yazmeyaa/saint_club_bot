@@ -14,7 +14,7 @@ import {
   NOT_LINKED_USER_MESSAGE,
   NO_REPLY_TARGET_MESSAGE,
 } from "./consts";
-import { User } from "@orm/models/user";
+import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";

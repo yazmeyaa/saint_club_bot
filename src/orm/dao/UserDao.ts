@@ -1,5 +1,5 @@
 import { AppDataSource } from "@orm/data-source";
-import { User } from "@orm/models/user";
+import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { Repository } from "typeorm";
 import { BrawlStarsClub } from "@services/brawl-stars/api/types";

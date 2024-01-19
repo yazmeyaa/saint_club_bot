@@ -1,4 +1,4 @@
-import { User } from "@orm/models/user";
+import { User } from "@orm/models/User";
 import { UserDao } from "./UserDao";
 
 export abstract class Dao {

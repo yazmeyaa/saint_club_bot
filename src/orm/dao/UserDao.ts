@@ -19,7 +19,7 @@ export class UserDao {
   public async getOrCreateUser(telegram_id: number): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { telegram_id },
-      relations: ['battleLogs'],
+      relations: ["battleLogs"],
     });
     if (existingUser) return existingUser;
     return this.userRepository.save({ telegram_id });
@@ -69,5 +69,13 @@ export class UserDao {
       },
       relations: { battleLogs: true },
     });
+  }
+
+  public async getUserByPlayerTag(player_tag: string) {
+    const user = this.userRepository.findOne({ where: {player_tag}, relations: {
+      battleLogs: true
+    } });
+
+    return user;
   }
 }

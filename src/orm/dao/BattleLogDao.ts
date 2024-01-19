@@ -4,6 +4,9 @@ import { BattleLog } from "@orm/models/BattleLog";
 import { User } from "@orm/models/User";
 import { BattleResult } from "@services/brawl-stars/api/types";
 import { Repository } from "typeorm";
+import { UserDao } from "./UserDao";
+
+const userDao = new UserDao();
 
 export class BattleLogDao {
   private battleLogRepository: Repository<BattleLog>;
@@ -50,5 +53,11 @@ export class BattleLogDao {
         .orIgnore()
         .execute();
     }
+  }
+
+  public async getLogsByPlayerTag(player_tag: string) {
+    const user = await userDao.getUserByPlayerTag(player_tag);
+
+    return user?.battleLogs ?? null;
   }
 }

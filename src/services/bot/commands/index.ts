@@ -18,8 +18,11 @@ import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";
+import { BattleLogDao } from "@orm/dao/BattleLogDao";
+import { parseDateStringToDate } from "@helpers/date";
 
 const userDao = new UserDao();
+const battleLogDao = new BattleLogDao();
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
@@ -171,4 +174,29 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
 ${clubMembersTxt}`;
 
   return ctx.reply(msg, { parse_mode: "Markdown" });
+});
+
+brawlStarsComposer.command(/^get_logs/, async (ctx) => {
+  const [playerTag] = ctx.args;
+
+  const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
+  if (!isAdminRequest) return;
+
+  if (!isValidPlayerTag(playerTag)) {
+    return ctx.reply(INVALID_TAG_MESSAGE);
+  }
+
+  const logs = await battleLogDao.getLogsByPlayerTag(playerTag);
+
+  if (!logs) return ctx.reply("Не удалось получить данные об этом игроке.");
+
+  const logsTxt = logs
+    .map((item) => {
+      return `Время игры: ${item.battleTime.toLocaleString()}\nИзменения в кубках: ${
+        item.trophyChange
+      }🏆\n`;
+    })
+    .join("\n");
+
+  ctx.reply(logsTxt);
 });

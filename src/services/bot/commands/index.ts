@@ -94,9 +94,9 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
   await user.reload();
 
   const battleLogs = await battleLogService.getUserBattleLog(user);
-  const logs1day = await battleLogService.getUserBattleLogsFor("day");
-  const logs1week = await battleLogService.getUserBattleLogsFor("week");
-  const logs1month = await battleLogService.getUserBattleLogsFor("month");
+  const logs1day = await battleLogService.getUserBattleLogsFor("day", user);
+  const logs1week = await battleLogService.getUserBattleLogsFor("week", user);
+  const logs1month = await battleLogService.getUserBattleLogsFor("month", user);
 
   const logs = { battleLogs, logs1day, logs1week, logs1month };
 
@@ -132,9 +132,9 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
   await battleLogService.updateUser(user);
 
   const battleLogs = await battleLogService.getUserBattleLog(user);
-  const logs1day = await battleLogService.getUserBattleLogsFor("day");
-  const logs1week = await battleLogService.getUserBattleLogsFor("week");
-  const logs1month = await battleLogService.getUserBattleLogsFor("month");
+  const logs1day = await battleLogService.getUserBattleLogsFor("day", user);
+  const logs1week = await battleLogService.getUserBattleLogsFor("week", user);
+  const logs1month = await battleLogService.getUserBattleLogsFor("month", user);
 
   const logs = { battleLogs, logs1day, logs1week, logs1month };
 

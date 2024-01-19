@@ -17,7 +17,7 @@ export class UserDao {
       relations: ["battleLogs"],
     });
     if (existingUser) return existingUser;
-    return this.userRepository.save({ telegram_id });
+    return await this.userRepository.save({ telegram_id });
   }
 
   public async removePlayerTag(telegram_id: number): RemovePlayerTagResponse {

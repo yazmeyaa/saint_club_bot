@@ -20,6 +20,8 @@ import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";
 import { BattleLogDao } from "@orm/dao/BattleLogDao";
 import { parseDateStringToDate } from "@helpers/date";
+import { battleLogService } from "@services/battle-logs";
+import { userService } from "@services/user";
 
 const userDao = new UserDao();
 const battleLogDao = new BattleLogDao();
@@ -77,22 +79,29 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
     typeof ctx.update.message === "undefined" ||
     typeof ctx.update.message.reply_to_message === "undefined" ||
     typeof ctx.update.message.reply_to_message.from === "undefined" ||
-    "forum_topic_created" in ctx.update.message.reply_to_message
+    "forum_topic_created" in ctx.update.message.reply_to_message ||
+    !target_id
   ) {
     return ctx.reply(NO_REPLY_TARGET_MESSAGE);
   }
 
-  const user = await User.findOne({ where: { telegram_id: target_id } });
+  const user = await userDao.getOrCreateUser(target_id);
 
   if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
   if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
+  await battleLogService.updateUser(user);
+  await user.reload();
+
+  const battleLogs = await battleLogService.getUserBattleLog(user);
+  const logs1day = await battleLogService.getUserBattleLogsFor("day");
+  const logs1week = await battleLogService.getUserBattleLogsFor("week");
+  const logs1month = await battleLogService.getUserBattleLogsFor("month");
+
+  const logs = { battleLogs, logs1day, logs1week, logs1month };
+
   try {
     const playerData = await brawlStarsService.players.getPlayerInfo(
-      user.player_tag
-    );
-
-    const playerBattleLog = await brawlStarsService.players.getPlayerBattleLog(
       user.player_tag
     );
 
@@ -100,11 +109,11 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, playerBattleLog.items),
+        caption: templatesBS("profile", playerData, logs),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, playerBattleLog.items), {
+      ctx.reply(templatesBS("profile", playerData, logs), {
         parse_mode: "Markdown",
       });
     }
@@ -117,8 +126,17 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
 brawlStarsComposer.command(/^me/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;
 
-  const user = await User.findOne({ where: { telegram_id } });
+  const user = await userDao.getOrCreateUser(telegram_id);
   if (!user || !user.player_tag) return;
+
+  await battleLogService.updateUser(user);
+
+  const battleLogs = await battleLogService.getUserBattleLog(user);
+  const logs1day = await battleLogService.getUserBattleLogsFor("day");
+  const logs1week = await battleLogService.getUserBattleLogsFor("week");
+  const logs1month = await battleLogService.getUserBattleLogsFor("month");
+
+  const logs = { battleLogs, logs1day, logs1week, logs1month };
 
   try {
     const playerData = await brawlStarsService.players.getPlayerInfo(
@@ -127,17 +145,13 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
 
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
-    const playerBattleLog = await brawlStarsService.players.getPlayerBattleLog(
-      user.player_tag
-    );
-
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, playerBattleLog.items),
+        caption: templatesBS("profile", playerData, logs),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, playerBattleLog.items), {
+      ctx.reply(templatesBS("profile", playerData, logs), {
         parse_mode: "Markdown",
       });
     }
@@ -154,12 +168,9 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
 
   if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
   if (!user.player_tag) return ctx.reply(NOT_LINKED_USER_MESSAGE);
-  const userData = await brawlStarsService.players.getPlayerInfo(
-    user.player_tag
-  );
 
-  const clubData = await userDao.getUserClubInfo(telegram_id);
-  const members = await userDao.getUserClubMembers(telegram_id);
+  const clubData = await userService.getUserClubInfo(telegram_id);
+  const members = await userService.getUserClubMembers(telegram_id);
 
   if (!members || !clubData) {
     return ctx.reply("Пользователь не состоит в клубе");
@@ -187,8 +198,7 @@ brawlStarsComposer.command(/^get_logs/, async (ctx) => {
   }
 
   const logs = await battleLogDao.getLogsByPlayerTag(playerTag);
-
-  if (!logs) return ctx.reply("Не удалось получить данные об этом игроке.");
+  if (logs.length === 0) return ctx.reply("У пользователя нет логов.");
 
   const logsTxt = logs
     .map((item) => {

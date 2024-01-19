@@ -2,11 +2,19 @@ import {
   getTrophyChange,
   getWinsAndLosesRow,
 } from "@services/brawl-stars/helpers";
-import { BattleResult, Player } from "@services/brawl-stars/api/types";
+import { Player } from "@services/brawl-stars/api/types";
+import { BattleLog } from "@orm/models/BattleLog";
+
+interface LogsObject {
+  battleLogs: BattleLog[];
+  logs1day: BattleLog[];
+  logs1week: BattleLog[];
+  logs1month: BattleLog[];
+}
 
 export const template_BS_profile = (
   profile: Player,
-  battleResults: BattleResult[]
+  battleResults: LogsObject
 ): string => {
   const header = `*${profile.name}* (${profile.tag})`;
 
@@ -15,12 +23,22 @@ export const template_BS_profile = (
 
   const club = profile.club ? `👾Клуб: ${profile.club.name}` : "";
   const currentTrophies = `🏆Трофеи: ${profile.trophies} (максимум ${profile.highestTrophies})`;
-  const trophiesDifference = getTrophyChange(battleResults);
+  const trophiesDifference = getTrophyChange(battleResults.battleLogs);
   const trophiesDiff = `🏆Изменение трофеев (25 игр): ${
     trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
   }🏆`;
 
-  const winsAndLosesRow = `\`${getWinsAndLosesRow(battleResults)}\``;
+  const winsAndLosesRow = `\`${getWinsAndLosesRow(battleResults.battleLogs)}\``;
+
+  const trophiesDiff_day = `🏆Изменение трофеев (1 день): ${
+    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+  }🏆`;
+  const trophiesDiff_week = `🏆Изменение трофеев (1 неделя): ${
+    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+  }🏆`;
+  const trophiesDiff_month = `🏆Изменение трофеев (1 месяц): ${
+    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+  }🏆`;
 
   const wins3v3 = `🥇Победы 3v3: ${profile["3vs3Victories"]}`;
   const soloWins = `🥇Победы соло: ${profile.soloVictories}`;
@@ -34,6 +52,10 @@ export const template_BS_profile = (
     currentTrophies,
     trophiesDiff,
     winsAndLosesRow,
+    "",
+    trophiesDiff_day,
+    trophiesDiff_week,
+    trophiesDiff_month,
     "",
     wins3v3,
     soloWins,

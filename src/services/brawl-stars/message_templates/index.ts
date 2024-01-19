@@ -33,7 +33,6 @@ export function templatesBS<K extends KeyofTemplates, P extends PayloadType<K>>(
   key: K,
   ...payload: P
 ): string {
-  console.log({payload})
   //! TS-IGNORE user cause TypeScript doesn't support this type cast.
   //! This may be solved by Reflect.apply(templatesMap[key], null, [payload])
   //! But its hard to understand.

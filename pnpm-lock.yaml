@@ -17,6 +17,9 @@ dependencies:
   cross-env:
     specifier: ^7.0.3
     version: 7.0.3
+  date-fns:
+    specifier: ^3.2.0
+    version: 3.2.0
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -579,6 +582,10 @@ packages:
       es5-ext: 0.10.62
       type: 1.2.0
     dev: true
+
+  /date-fns@3.2.0:
+    resolution: {integrity: sha512-E4KWKavANzeuusPi0jUjpuI22SURAznGkx7eZV+4i6x2A+IZxAMcajgkvuDAU1bg40+xuhW1zRdVIIM/4khuIg==}
+    dev: false
 
   /dayjs@1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}

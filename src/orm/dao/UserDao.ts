@@ -1,13 +1,8 @@
 import { AppDataSource } from "@orm/data-source";
 import { User } from "@orm/models/User";
-import { brawlStarsService } from "@services/brawl-stars/api";
 import { IsNull, Not, Repository } from "typeorm";
-import { BrawlStarsClub } from "@services/brawl-stars/api/types";
-import { ClubMemberList } from "@services/brawl-stars/api/types/club";
 
-type UserClubInfoResponse = Promise<BrawlStarsClub | null>;
 type RemovePlayerTagResponse = Promise<User | null>;
-type GetClubMembersResponse = Promise<ClubMemberList | null>;
 
 export class UserDao {
   private userRepository: Repository<User>;
@@ -33,31 +28,6 @@ export class UserDao {
     return await user.save();
   }
 
-  public async getUserClubInfo(telegram_id: number): UserClubInfoResponse {
-    const user = await this.userRepository.findOneBy({ telegram_id });
-    if (!user || !user.player_tag) return null;
-
-    const userInfo = await brawlStarsService.players.getPlayerInfo(
-      user.player_tag
-    );
-    if (!userInfo || !userInfo.club.tag) return null;
-
-    const clubInfo = await brawlStarsService.clubs.getClanInfo(
-      userInfo.club.tag
-    );
-    if (!clubInfo) return null;
-    return clubInfo;
-  }
-
-  public async getUserClubMembers(telegram_id: number): GetClubMembersResponse {
-    const club = await this.getUserClubInfo(telegram_id);
-    if (!club) return null;
-
-    const members = await brawlStarsService.clubs.getClanMembers(club.tag);
-
-    return members.items;
-  }
-
   public async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find({ relations: { battleLogs: true } });
   }
@@ -72,9 +42,12 @@ export class UserDao {
   }
 
   public async getUserByPlayerTag(player_tag: string) {
-    const user = this.userRepository.findOne({ where: {player_tag}, relations: {
-      battleLogs: true
-    } });
+    const user = this.userRepository.findOne({
+      where: { player_tag },
+      relations: {
+        battleLogs: true,
+      },
+    });
 
     return user;
   }

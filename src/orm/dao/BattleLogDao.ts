@@ -72,7 +72,7 @@ export class BattleLogDao {
     });
   }
 
-  public async getUserBattleLogsFor(param: "day" | "week" | "month") {
+  public async getUserBattleLogsFor(param: "day" | "week" | "month", user: User) {
     const offsetDayMap: Record<typeof param, number> = {
       day: 0,
       week: 7,
@@ -82,6 +82,7 @@ export class BattleLogDao {
 
     const logs = await this.battleLogRepository.find({
       where: {
+        where: {user},
         battleTime: MoreThan(targetDate),
       },
     });

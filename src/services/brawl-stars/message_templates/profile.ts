@@ -5,7 +5,7 @@ import {
 import { Player } from "@services/brawl-stars/api/types";
 import { BattleLog } from "@orm/models/BattleLog";
 
-interface LogsObject {
+export interface LogsObject {
   battleLogs: BattleLog[];
   logs1day: BattleLog[];
   logs1week: BattleLog[];

@@ -30,7 +30,10 @@ export class BattleLogService {
     }
   }
 
-  public async getUserBattleLogsFor(param: "day" | "week" | "month", user: User) {
+  public async getUserBattleLogsFor(
+    param: "day" | "week" | "month",
+    user: User
+  ) {
     return await this.battleLogDao.getUserBattleLogsFor(param, user);
   }
 }

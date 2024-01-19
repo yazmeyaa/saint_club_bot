@@ -82,7 +82,7 @@ export class BattleLogDao {
 
     const logs = await this.battleLogRepository.find({
       where: {
-        where: {user},
+        user,
         battleTime: MoreThan(targetDate),
       },
     });

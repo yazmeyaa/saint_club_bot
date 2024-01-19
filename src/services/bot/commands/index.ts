@@ -1,6 +1,5 @@
 import {
   checkIsAdmin,
-  getTrophyChange,
   isValidPlayerTag,
   transformClubMembers,
 } from "@services/bot/helpers";
@@ -94,7 +93,6 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
       user.player_tag
     );
 
-
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
     if (icon) {
@@ -129,9 +127,6 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
     const playerBattleLog = await brawlStarsService.players.getPlayerBattleLog(
       user.player_tag
     );
-
-    const trophiesDifferent = getTrophyChange(playerBattleLog.items);
-    console.log({ trophiesDifferent });
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {

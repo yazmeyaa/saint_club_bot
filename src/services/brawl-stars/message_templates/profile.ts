@@ -1,4 +1,7 @@
-import { getTrophyChange, getWinsAndLosesRow } from "@services/bot/helpers";
+import {
+  getTrophyChange,
+  getWinsAndLosesRow,
+} from "@services/brawl-stars/helpers";
 import { BattleResult, Player } from "@services/brawl-stars/api/types";
 
 export const template_BS_profile = (
@@ -17,8 +20,7 @@ export const template_BS_profile = (
     trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
   }🏆`;
 
-  const winsAndLosesRow = getWinsAndLosesRow(battleResults);
-
+  const winsAndLosesRow = `\`${getWinsAndLosesRow(battleResults)}\``;
 
   const wins3v3 = `🥇Победы 3v3: ${profile["3vs3Victories"]}`;
   const soloWins = `🥇Победы соло: ${profile.soloVictories}`;

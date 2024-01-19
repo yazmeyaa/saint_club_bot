@@ -1,7 +1,7 @@
 import { AppDataSource } from "@orm/data-source";
 import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
-import { Repository } from "typeorm";
+import { IsNull, Not, Repository } from "typeorm";
 import { BrawlStarsClub } from "@services/brawl-stars/api/types";
 import { ClubMemberList } from "@services/brawl-stars/api/types/club";
 
@@ -19,7 +19,7 @@ export class UserDao {
   public async getOrCreateUser(telegram_id: number): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { telegram_id },
-      relations: ["battleLogs"],
+      relations: ['battleLogs'],
     });
     if (existingUser) return existingUser;
     return this.userRepository.save({ telegram_id });
@@ -56,5 +56,18 @@ export class UserDao {
     const members = await brawlStarsService.clubs.getClanMembers(club.tag);
 
     return members.items;
+  }
+
+  public async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find({ relations: { battleLogs: true } });
+  }
+
+  public async getAllLinkedUsers(): Promise<User[]> {
+    return await this.userRepository.find({
+      where: {
+        player_tag: Not(IsNull()),
+      },
+      relations: { battleLogs: true },
+    });
   }
 }

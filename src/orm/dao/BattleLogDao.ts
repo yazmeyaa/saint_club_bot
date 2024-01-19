@@ -1,3 +1,4 @@
+import { parseDateStringToDate } from "@helpers/date";
 import { AppDataSource } from "@orm/data-source";
 import { BattleLog } from "@orm/models/BattleLog";
 import { User } from "@orm/models/User";
@@ -22,5 +23,32 @@ export class BattleLogDao {
     });
 
     return log;
+  }
+
+  public async loadBattleLogs(user: User, battleLogs: BattleResult[]) {
+    const payload: BattleLog[] = battleLogs
+      .filter(
+        (item) =>
+          item.battle.type === "ranked" &&
+          typeof item.battle.trophyChange !== "undefined"
+      )
+      .map((item) => {
+        const log = BattleLog.create({
+          battleTime: parseDateStringToDate(item.battleTime),
+          trophyChange: item.battle.trophyChange,
+          user,
+        });
+        return log;
+      });
+
+    for (const log of payload) {
+      this.battleLogRepository
+        .createQueryBuilder()
+        .insert()
+        .into(this.battleLogRepository.target)
+        .values(log)
+        .orIgnore()
+        .execute();
+    }
   }
 }

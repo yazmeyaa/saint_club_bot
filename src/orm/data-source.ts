@@ -7,6 +7,7 @@ import { homedir } from "os";
 import { join } from "path";
 import { DataSource } from "typeorm";
 import { BattleLog } from "./models/BattleLog";
+import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-updateschemabattlelog";
 
 const dbDir = join(homedir(), "saint_club_helper_bot");
 const dbFile = join(dbDir, "db.sqlite");
@@ -21,7 +22,11 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: true,
   subscribers: [],
-  migrations: [Initdatabase1705350896162, Createbattlelog1705664224603],
+  migrations: [
+    Initdatabase1705350896162,
+    Createbattlelog1705664224603,
+    Updateschemabattlelog1705687798028
+  ],
   entities: [User, BattleLog],
 });
 

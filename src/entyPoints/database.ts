@@ -10,5 +10,5 @@ export async function initDatabase() {
   admin.admin = true;
   await admin.save();
 
-  console.log({ admin });
+  console.log({ adminBattleLogs: admin.battleLogs });
 }

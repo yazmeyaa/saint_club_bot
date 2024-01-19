@@ -9,4 +9,6 @@ export async function initDatabase() {
   const admin = await userDao.getOrCreateUser(279603779);
   admin.admin = true;
   await admin.save();
+
+  console.log({ admin });
 }

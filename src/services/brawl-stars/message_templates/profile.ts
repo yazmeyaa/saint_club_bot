@@ -1,8 +1,9 @@
-import { Player } from "@services/brawl-stars/api/types";
+import { getTrophyChange, getWinsAndLosesRow } from "@services/bot/helpers";
+import { BattleResult, Player } from "@services/brawl-stars/api/types";
 
 export const template_BS_profile = (
   profile: Player,
-  trophiesDifference?: number
+  battleResults: BattleResult[]
 ): string => {
   const header = `*${profile.name}* (${profile.tag})`;
 
@@ -11,11 +12,14 @@ export const template_BS_profile = (
 
   const club = profile.club ? `👾Клуб: ${profile.club.name}` : "";
   const currentTrophies = `🏆Трофеи: ${profile.trophies} (максимум ${profile.highestTrophies})`;
-  const trophiesDiff = trophiesDifference
-    ? `🏆Изменение трофеев (25 игр): ${
-        trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
-      }🏆`
-    : "";
+  const trophiesDifference = getTrophyChange(battleResults);
+  const trophiesDiff = `🏆Изменение трофеев (25 игр): ${
+    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+  }🏆`;
+
+  const winsAndLosesRow = getWinsAndLosesRow(battleResults);
+
+
   const wins3v3 = `🥇Победы 3v3: ${profile["3vs3Victories"]}`;
   const soloWins = `🥇Победы соло: ${profile.soloVictories}`;
   const duoWins = `🥇Победы дуо: ${profile.duoVictories}`;
@@ -27,6 +31,7 @@ export const template_BS_profile = (
     "",
     currentTrophies,
     trophiesDiff,
+    winsAndLosesRow,
     "",
     wins3v3,
     soloWins,

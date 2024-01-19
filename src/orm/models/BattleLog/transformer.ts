@@ -1,3 +1,5 @@
+import { parseDateStringToDate } from "@helpers/date";
+
 /**
  * Fixes an issue with sqlite3 dates not being parsed correctly
  */
@@ -12,7 +14,7 @@ export class DateTransformer {
 
 function fixDate(date: Date | string): Date {
   if (typeof date === "string") {
-    return new Date(date);
+    return parseDateStringToDate(date);
   }
   return date;
 }

@@ -17,7 +17,10 @@ export class UserDao {
   }
 
   public async getOrCreateUser(telegram_id: number): Promise<User> {
-    const existingUser = await this.userRepository.findOneBy({ telegram_id });
+    const existingUser = await this.userRepository.findOne({
+      where: { telegram_id },
+      relations: ["battleLogs"],
+    });
     if (existingUser) return existingUser;
     return this.userRepository.save({ telegram_id });
   }

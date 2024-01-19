@@ -1,5 +1,6 @@
 import {
   checkIsAdmin,
+  getTrophyChange,
   isValidPlayerTag,
   transformClubMembers,
 } from "@services/bot/helpers";
@@ -93,20 +94,16 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
       user.player_tag
     );
 
-    const trophiesDifferent = playerBattleLog.items.reduce(
-      (acc, curr) => (acc += (curr.battle.trophyChange ?? 0)),
-      0
-    );
 
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, trophiesDifferent),
+        caption: templatesBS("profile", playerData, playerBattleLog.items),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData), {
+      ctx.reply(templatesBS("profile", playerData, playerBattleLog.items), {
         parse_mode: "Markdown",
       });
     }
@@ -133,19 +130,16 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
       user.player_tag
     );
 
-    const trophiesDifferent = playerBattleLog.items.reduce(
-      (acc, curr) => (acc += (curr.battle.trophyChange ?? 0)),
-      0
-    );
+    const trophiesDifferent = getTrophyChange(playerBattleLog.items);
     console.log({ trophiesDifferent });
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, trophiesDifferent),
+        caption: templatesBS("profile", playerData, playerBattleLog.items),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, trophiesDifferent), {
+      ctx.reply(templatesBS("profile", playerData, playerBattleLog.items), {
         parse_mode: "Markdown",
       });
     }

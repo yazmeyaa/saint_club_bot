@@ -118,7 +118,7 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
   }
 });
@@ -158,7 +158,7 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
   }
   ctx.reply(JSON.stringify(user, undefined, 2));

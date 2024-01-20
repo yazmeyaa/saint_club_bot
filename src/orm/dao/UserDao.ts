@@ -32,12 +32,13 @@ export class UserDao {
     return await this.userRepository.find({ relations: { battleLogs: logs } });
   }
 
-  public async getAllLinkedUsers(logs = false): Promise<User[]> {
+  public async getAllLinkedUsers(logs = false, limit?: number): Promise<User[]> {
     return await this.userRepository.find({
       where: {
         player_tag: Not(IsNull()),
       },
       relations: { battleLogs: logs },
+      take: limit
     });
   }
 

@@ -48,7 +48,7 @@ export class UserService {
     limit: number = 5,
     period: "day" | "week" | "month" = "day"
   ): UserTopResponse {
-    const users = await this.userDao.getAllLinkedUsers(true);
+    const users = await this.userDao.getAllLinkedUsers(true, limit);
 
     const usersWithStats = await Promise.all(
       users.map((item) => this.getUserTrophyChangeByPeriod(item, period))

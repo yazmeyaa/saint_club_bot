@@ -19,7 +19,6 @@ import { brawlStarsService } from "@services/brawl-stars/api";
 import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";
 import { BattleLogDao } from "@orm/dao/BattleLogDao";
-import { parseDateStringToDate } from "@helpers/date";
 import { battleLogService } from "@services/battle-logs";
 import { userService } from "@services/user";
 
@@ -91,12 +90,13 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
   if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
   await battleLogService.updateUser(user);
-  await user.reload();
 
-  const battleLogs = await battleLogService.getUserBattleLog(user);
-  const logs1day = await battleLogService.getUserBattleLogsFor("day", user);
-  const logs1week = await battleLogService.getUserBattleLogsFor("week", user);
-  const logs1month = await battleLogService.getUserBattleLogsFor("month", user);
+  const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
+    battleLogService.getUserBattleLog(user),
+    battleLogService.getUserBattleLogsFor("day", user),
+    battleLogService.getUserBattleLogsFor("week", user),
+    battleLogService.getUserBattleLogsFor("month", user),
+  ]);
 
   const logs = { battleLogs, logs1day, logs1week, logs1month };
 
@@ -131,10 +131,12 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
 
   await battleLogService.updateUser(user);
 
-  const battleLogs = await battleLogService.getUserBattleLog(user);
-  const logs1day = await battleLogService.getUserBattleLogsFor("day", user);
-  const logs1week = await battleLogService.getUserBattleLogsFor("week", user);
-  const logs1month = await battleLogService.getUserBattleLogsFor("month", user);
+  const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
+    battleLogService.getUserBattleLog(user),
+    battleLogService.getUserBattleLogsFor("day", user),
+    battleLogService.getUserBattleLogsFor("week", user),
+    battleLogService.getUserBattleLogsFor("month", user),
+  ]);
 
   const logs = { battleLogs, logs1day, logs1week, logs1month };
 
@@ -169,8 +171,10 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
   if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
   if (!user.player_tag) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
-  const clubData = await userService.getUserClubInfo(telegram_id);
-  const members = await userService.getUserClubMembers(telegram_id);
+  const [clubData, members] = await Promise.all([
+    userService.getUserClubInfo(telegram_id),
+    userService.getUserClubMembers(telegram_id),
+  ]);
 
   if (!members || !clubData) {
     return ctx.reply("Пользователь не состоит в клубе");

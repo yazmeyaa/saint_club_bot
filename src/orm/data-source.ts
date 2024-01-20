@@ -11,7 +11,7 @@ import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-u
 import { UpdateBattleLogSchema1705696256821 } from "./migrations/1705696256821-update_battle_log_schema";
 
 const dbDir = join(homedir(), "saint_club_helper_bot");
-const dbFile = join(dbDir, "db.sqlite");
+const dbFile = join(dbDir, "zzzzzzzzzzzzzzssssssssssdb.sqlite");
 
 if (!existsSync(dbDir)) {
   mkdirSync(dbDir, { recursive: true });

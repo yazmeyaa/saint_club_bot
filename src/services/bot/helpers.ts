@@ -39,4 +39,3 @@ export async function transformClubMembers(
 export function createMention(name: string, user_id: number) {
   return `\[${name}\](tg://user?id=${user_id})`;
 }
-

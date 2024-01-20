@@ -29,8 +29,11 @@ export async function transformClubMembers(
 
   for (const member of members) {
     const user = findMembers.find((item) => item.player_tag === member.tag);
-    if (user) membersStrings.push(createMention(member.name, user.telegram_id));
-    else membersStrings.push(member.name);
+    if (user)
+      membersStrings.push(
+        createMention(member.name, user.telegram_id) + ` (${member.tag})`
+      );
+    else membersStrings.push(member.name + ` (${member.tag})`);
   }
 
   return membersStrings.join("\n");

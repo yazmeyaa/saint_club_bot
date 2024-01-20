@@ -40,6 +40,7 @@ export class BattleLogService {
   public async removeOld(days: number = 30) {
     return await this.battleLogDao.removeOld(days);
   }
+
 }
 
 export const battleLogService = new BattleLogService();

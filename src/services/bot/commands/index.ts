@@ -214,3 +214,27 @@ brawlStarsComposer.command(/^get_logs/, async (ctx) => {
 
   ctx.reply(logsTxt);
 });
+
+brawlStarsComposer.command(/^top_daily/, async (ctx) => {
+  const users = await userService.getTopUser(5, "day");
+
+  const textArray = users.map(async (item, index) => {
+    const playerInfo = await brawlStarsService.players.getPlayerInfo(
+      item.user.player_tag!
+    );
+
+    return `${index + 1}. ${playerInfo.name}: 🏆${
+      item.trophyChanges > 0 ? "+" + item.trophyChanges : item.trophyChanges
+    }`;
+  });
+
+  const stringsArr = await Promise.all(textArray);
+
+  const msg = [
+    "🔥 Топ игроков за сегодня:",
+    "",
+    ...stringsArr
+  ].join('\n')
+
+  return ctx.reply(msg);
+});

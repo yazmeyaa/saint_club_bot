@@ -28,16 +28,16 @@ export class UserDao {
     return await user.save();
   }
 
-  public async getAllUsers(): Promise<User[]> {
-    return await this.userRepository.find({ relations: { battleLogs: true } });
+  public async getAllUsers(logs = false): Promise<User[]> {
+    return await this.userRepository.find({ relations: { battleLogs: logs } });
   }
 
-  public async getAllLinkedUsers(): Promise<User[]> {
+  public async getAllLinkedUsers(logs = false): Promise<User[]> {
     return await this.userRepository.find({
       where: {
         player_tag: Not(IsNull()),
       },
-      relations: { battleLogs: true },
+      relations: { battleLogs: logs },
     });
   }
 

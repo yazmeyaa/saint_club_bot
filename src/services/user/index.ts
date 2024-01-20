@@ -1,10 +1,21 @@
 import { UserDao } from "@orm/dao/UserDao";
+import { User } from "@orm/models/User";
+import { battleLogService } from "@services/battle-logs";
 import { brawlStarsService } from "@services/brawl-stars/api";
-import { BrawlStarsClub, ClubMemberList } from "@services/brawl-stars/api/types";
+import {
+  BrawlStarsClub,
+  ClubMemberList,
+} from "@services/brawl-stars/api/types";
+import { getTrophyChange } from "@services/brawl-stars/helpers";
 
 type GetClubMembersResponse = Promise<ClubMemberList | null>;
 type UserClubInfoResponse = Promise<BrawlStarsClub | null>;
-
+type UserTopResponse = Promise<
+  Array<{
+    user: User;
+    trophyChanges: number;
+  }>
+>;
 export class UserService {
   private userDao = new UserDao();
 
@@ -31,6 +42,31 @@ export class UserService {
     const members = await brawlStarsService.clubs.getClanMembers(club.tag);
 
     return members.items;
+  }
+
+  public async getTopUser(
+    limit: number = 5,
+    period: "day" | "week" | "month" = "day"
+  ): UserTopResponse {
+    const users = await this.userDao.getAllLinkedUsers(true);
+
+    const usersWithStats = await Promise.all(
+      users.map((item) => this.getUserTrophyChangeByPeriod(item, period))
+    );
+
+    return usersWithStats
+      .sort((a, b) => b.trophyChanges - a.trophyChanges)
+      .slice(0, limit);
+  }
+
+  private async getUserTrophyChangeByPeriod(
+    user: User,
+    period: "day" | "week" | "month" = "day"
+  ) {
+    const logs = await battleLogService.getUserBattleLogsFor(period, user);
+    const trophyChanges = getTrophyChange(logs);
+
+    return { user, trophyChanges };
   }
 }
 

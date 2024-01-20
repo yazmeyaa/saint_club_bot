@@ -74,7 +74,7 @@ export class BattleLogDao {
 
   public async getUserBattleLogsFor(param: "day" | "week" | "month", user: User) {
     const offsetDayMap: Record<typeof param, number> = {
-      day: 0,
+      day: 1,
       week: 7,
       month: 31,
     } as const;

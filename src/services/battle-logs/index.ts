@@ -8,7 +8,7 @@ export class BattleLogService {
   private userDao = new UserDao();
 
   public async getUserBattleLog(user: User, limit: number = 25) {
-    return await this.battleLogDao.getBattleLogsByUser(user, limit);
+    return await this.battleLogDao.getByUser(user, limit);
   }
 
   public async updateUser(user: User): Promise<void> {
@@ -19,7 +19,7 @@ export class BattleLogService {
       player_tag
     );
 
-    await this.battleLogDao.loadBattleLogs(user, battleLog.items);
+    await this.battleLogDao.load(user, battleLog.items);
   }
 
   public async updateUsersStat() {
@@ -34,7 +34,11 @@ export class BattleLogService {
     param: "day" | "week" | "month",
     user: User
   ) {
-    return await this.battleLogDao.getUserBattleLogsFor(param, user);
+    return await this.battleLogDao.getUserLogsFor(param, user);
+  }
+
+  public async removeOld(days: number = 30) {
+    return await this.battleLogDao.removeOld(days);
   }
 }
 

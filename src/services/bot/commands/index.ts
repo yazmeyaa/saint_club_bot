@@ -201,7 +201,7 @@ brawlStarsComposer.command(/^get_logs/, async (ctx) => {
     return ctx.reply(INVALID_TAG_MESSAGE);
   }
 
-  const logs = await battleLogDao.getLogsByPlayerTag(playerTag);
+  const logs = await battleLogDao.getByPlayerTag(playerTag);
   if (logs.length === 0) return ctx.reply("У пользователя нет логов.");
 
   const logsTxt = logs

@@ -3,7 +3,7 @@ import { AppDataSource } from "@orm/data-source";
 import { BattleLog } from "@orm/models/BattleLog";
 import { User } from "@orm/models/User";
 import { BattleResult } from "@services/brawl-stars/api/types";
-import { MoreThan, Repository } from "typeorm";
+import { LessThanOrEqual, MoreThan, Repository } from "typeorm";
 import { subDays } from "date-fns";
 
 export class BattleLogDao {
@@ -26,7 +26,7 @@ export class BattleLogDao {
     return log;
   }
 
-  public async loadBattleLogs(user: User, battleLogs: BattleResult[]) {
+  public async load(user: User, battleLogs: BattleResult[]) {
     const payload: BattleLog[] = battleLogs.map((item) => {
       const log = BattleLog.create({
         battleTime: parseDateStringToDate(item.battleTime),
@@ -53,7 +53,7 @@ export class BattleLogDao {
     }
   }
 
-  public async getLogsByPlayerTag(player_tag: string) {
+  public async getByPlayerTag(player_tag: string) {
     const logs = this.battleLogRepository.find({
       where: {
         user: {
@@ -65,14 +65,32 @@ export class BattleLogDao {
     return logs;
   }
 
-  public async getBattleLogsByUser(user: User, limit: number = 25) {
+  public async getByUser(user: User, limit: number = 25) {
     return await this.battleLogRepository.find({
       where: { user },
       take: limit,
     });
   }
 
-  public async getUserBattleLogsFor(param: "day" | "week" | "month", user: User) {
+  public async removeOld(days: number = 30) {
+    const today = new Date();
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    const targetDay = subDays(today, days - 1);
+
+    return await this.battleLogRepository
+      .createQueryBuilder()
+      .delete()
+      .from(this.battleLogRepository.target)
+      .where({
+        battleTime: LessThanOrEqual(targetDay),
+      })
+      .execute();
+  }
+
+  public async getUserLogsFor(param: "day" | "week" | "month", user: User) {
     const offsetDayMap: Record<typeof param, number> = {
       day: 1,
       week: 7,

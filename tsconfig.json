@@ -20,15 +20,12 @@
     "baseUrl": "./src",
     "strictPropertyInitialization": false,
     "paths": {
-      "types/*": ["./types/*"],
       "@services/*": ["./services/*"],
       "@config/*": ["./config/*"],
       "@helpers/*": ["./helpers/*"],
       "@templates/*": ["./templates/*"],
-      "@models/*": ["./models/*"],
       "@orm/*": ["./orm/*"],
       "@modules/*": ["./modules/*"],
-      "@commands/*": ["./commands/*"]
     },
     "skipLibCheck": true
   },

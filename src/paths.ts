@@ -9,7 +9,4 @@ addAliases({
     '@orm': `${__dirname}/orm`,
     '@modules': `${__dirname}/modules`,
     '@helpers': `${__dirname}/helpers`,
-    '@templates': `${__dirname}/templates`,
-    '@commands': `${__dirname}/commands`,
-    'types': `${__dirname}/types`,
 })

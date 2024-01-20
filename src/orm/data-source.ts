@@ -10,6 +10,8 @@ import { BattleLog } from "./models/BattleLog";
 import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-updateschemabattlelog";
 import { UpdateBattleLogSchema1705696256821 } from "./migrations/1705696256821-update_battle_log_schema";
 
+const { NODE_ENV } = process.env;
+
 const dbDir = join(homedir(), "saint_club_helper_bot");
 const dbFile = join(dbDir, "db.sqlite");
 
@@ -21,7 +23,7 @@ export const AppDataSource = new DataSource({
   type: "better-sqlite3",
   database: dbFile,
   synchronize: false,
-  logging: true,
+  logging: NODE_ENV === "development",
   subscribers: [],
   migrations: [
     Initdatabase1705350896162,

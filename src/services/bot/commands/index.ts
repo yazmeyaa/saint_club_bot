@@ -92,7 +92,7 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
   await battleLogService.updateUser(user);
 
   const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
-    battleLogService.getUserBattleLog(user),
+    battleLogService.getUserBattleLog(user, 25),
     battleLogService.getUserBattleLogsFor("day", user),
     battleLogService.getUserBattleLogsFor("week", user),
     battleLogService.getUserBattleLogsFor("month", user),
@@ -132,7 +132,7 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
   await battleLogService.updateUser(user);
 
   const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
-    battleLogService.getUserBattleLog(user),
+    battleLogService.getUserBattleLog(user, 25),
     battleLogService.getUserBattleLogsFor("day", user),
     battleLogService.getUserBattleLogsFor("week", user),
     battleLogService.getUserBattleLogsFor("month", user),

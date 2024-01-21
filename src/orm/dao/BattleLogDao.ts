@@ -90,18 +90,27 @@ export class BattleLogDao {
       .execute();
   }
 
-  public async getUserLogsFor(param: "day" | "week" | "month", user: User) {
-    const offsetDayMap: Record<typeof param, number> = {
+  public async getUserLogsFor(days: "day" | "week" | "month", user: User) {
+    const offsetDayMap: Record<typeof days, number> = {
       day: 1,
       week: 7,
       month: 31,
     } as const;
-    const targetDate = subDays(new Date(), offsetDayMap[param]);
+
+    const today = new Date();
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+
+    const offset = offsetDayMap[days] - 1;
+
+    const targetDay = subDays(today, offset);
 
     const logs = await this.battleLogRepository.find({
       where: {
         user,
-        battleTime: MoreThan(targetDate),
+        battleTime: MoreThan(targetDay),
       },
     });
 

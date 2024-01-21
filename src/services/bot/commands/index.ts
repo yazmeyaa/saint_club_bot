@@ -191,30 +191,6 @@ ${clubMembersTxt}`;
   return ctx.reply(msg, { parse_mode: "Markdown" });
 });
 
-brawlStarsComposer.command(/^get_logs/, async (ctx) => {
-  const [playerTag] = ctx.args;
-
-  const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
-  if (!isAdminRequest) return;
-
-  if (!isValidPlayerTag(playerTag)) {
-    return ctx.reply(INVALID_TAG_MESSAGE);
-  }
-
-  const logs = await battleLogDao.getByPlayerTag(playerTag);
-  if (logs.length === 0) return ctx.reply("У пользователя нет логов.");
-
-  const logsTxt = logs
-    .map((item) => {
-      return `Время игры: ${item.battleTime.toLocaleString()}\nИзменения в кубках: ${
-        item.trophyChange
-      }🏆\n`;
-    })
-    .join("\n");
-
-  ctx.reply(logsTxt);
-});
-
 brawlStarsComposer.command(/^top_daily/, async (ctx) => {
   const users = await userService.getTopUser(5, "day");
 
@@ -230,11 +206,7 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
 
   const stringsArr = await Promise.all(textArray);
 
-  const msg = [
-    "🔥 Топ игроков за сегодня:",
-    "",
-    ...stringsArr
-  ].join('\n')
+  const msg = ["🔥 Топ игроков за сегодня:", "", ...stringsArr].join("\n");
 
   return ctx.reply(msg);
 });

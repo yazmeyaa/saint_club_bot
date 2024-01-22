@@ -18,12 +18,10 @@ import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";
-import { BattleLogDao } from "@orm/dao/BattleLogDao";
-import { battleLogService } from "@services/battle-logs";
 import { userService } from "@services/user";
+import { LogsObject } from "@services/brawl-stars/message_templates/profile";
 
 const userDao = new UserDao();
-const battleLogDao = new BattleLogDao();
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
@@ -50,9 +48,10 @@ brawlStarsComposer.command(/^link/, async (ctx) => {
   const targetId = ctx.update.message.reply_to_message.from.id;
 
   try {
-    const user = await userDao.getOrCreateUser(targetId);
+    const user = await userService.getOrCreateUser(targetId);
     user.player_tag = playerTag;
     await user.save();
+    await userService.updateUserTrophies(user);
 
     ctx.reply(COMMAND_EXECUTED_MESSAGE);
   } catch (err) {
@@ -67,7 +66,7 @@ brawlStarsComposer.command(/^unlink/, async (ctx) => {
 
   const target_id = ctx.message.reply_to_message?.from?.id;
   if (!target_id) return ctx.reply(NO_REPLY_TARGET_MESSAGE);
-  await userDao.removePlayerTag(target_id);
+  await userService.removePlayerTag(target_id);
 
   ctx.reply("ok");
 });
@@ -89,17 +88,16 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
   if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
   if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
-  await battleLogService.updateUser(user);
+  const playerData = await brawlStarsService.players.getPlayerInfo(
+    user.player_tag
+  );
 
-  const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
-    battleLogService.getUserBattleLog(user, 25),
-    battleLogService.getUserBattleLogsFor("day", user),
-    battleLogService.getUserBattleLogsFor("week", user),
-    battleLogService.getUserBattleLogsFor("month", user),
-  ]);
-
-  const logs = { battleLogs, logs1day, logs1week, logs1month };
-
+  const logs: LogsObject = {
+    trophyChange25: 0,
+    trophyChangeDay: playerData.trophies - user.trophies.day,
+    trophyChangeWeek: playerData.trophies - user.trophies.week,
+    trophyChangeMonth: playerData.trophies - user.trophies.month,
+  };
   try {
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag
@@ -126,27 +124,24 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
 brawlStarsComposer.command(/^me/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;
 
-  const user = await userDao.getOrCreateUser(telegram_id);
-  if (!user || !user.player_tag) return;
+  const user = await userService.getOrCreateUser(telegram_id);
 
-  await battleLogService.updateUser(user);
-
-  const [battleLogs, logs1day, logs1week, logs1month] = await Promise.all([
-    battleLogService.getUserBattleLog(user, 25),
-    battleLogService.getUserBattleLogsFor("day", user),
-    battleLogService.getUserBattleLogsFor("week", user),
-    battleLogService.getUserBattleLogsFor("month", user),
-  ]);
-
-  const logs = { battleLogs, logs1day, logs1week, logs1month };
+  if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
+  if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
 
   try {
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag
     );
 
-    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
+    const logs: LogsObject = {
+      trophyChange25: 0,
+      trophyChangeDay: playerData.trophies - user.trophies.day,
+      trophyChangeWeek: playerData.trophies - user.trophies.week,
+      trophyChangeMonth: playerData.trophies - user.trophies.month,
+    };
 
+    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
     if (icon) {
       return ctx.replyWithPhoto(icon, {
         caption: templatesBS("profile", playerData, logs),
@@ -161,7 +156,6 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
     console.error(err);
     return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
   }
-  ctx.reply(JSON.stringify(user, undefined, 2));
 });
 
 brawlStarsComposer.command(/^club_list/, async (ctx) => {

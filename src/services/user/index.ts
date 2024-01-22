@@ -1,12 +1,10 @@
 import { UserDao } from "@orm/dao/UserDao";
 import { User } from "@orm/models/User";
-import { battleLogService } from "@services/battle-logs";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import {
   BrawlStarsClub,
   ClubMemberList,
 } from "@services/brawl-stars/api/types";
-import { getTrophyChange } from "@services/brawl-stars/helpers";
 
 type GetClubMembersResponse = Promise<ClubMemberList | null>;
 type UserClubInfoResponse = Promise<BrawlStarsClub | null>;
@@ -44,29 +42,64 @@ export class UserService {
     return members.items;
   }
 
+  public async getOrCreateUser(
+    telegram_id: number,
+    includeBattleLog: boolean = false
+  ): Promise<User> {
+    const user = await this.userDao.getOrCreateUser(
+      telegram_id,
+      includeBattleLog
+    );
+    return user;
+  }
+
+  public async updateUserTrophies(user: User): Promise<void> {
+    if (!user.player_tag) return;
+
+    const playerData = await brawlStarsService.players.getPlayerInfo(
+      user.player_tag
+    );
+    user.trophies.day =
+      user.trophies.week =
+      user.trophies.month =
+        playerData.trophies;
+    await user.trophies.save();
+  }
+
   public async getTopUser(
     limit: number = 5,
     period: "day" | "week" | "month" = "day"
   ): UserTopResponse {
-    const users = await this.userDao.getAllLinkedUsers(true);
+    const users = await this.userDao.getAllLinkedUsers(false);
+    console.log(users[0]);
 
     const usersWithStats = await Promise.all(
       users.map((item) => this.getUserTrophyChangeByPeriod(item, period))
     );
+
+    console.log({ usersWithStats });
 
     return usersWithStats
       .sort((a, b) => b.trophyChanges - a.trophyChanges)
       .slice(0, limit);
   }
 
-  private async getUserTrophyChangeByPeriod(
+  public async getUserTrophyChangeByPeriod(
     user: User,
     period: "day" | "week" | "month" = "day"
   ) {
-    const logs = await battleLogService.getUserBattleLogsFor(period, user);
-    const trophyChanges = getTrophyChange(logs);
+    const lastTrophy = user.trophies[period];
+    const playerData = await brawlStarsService.players.getPlayerInfo(
+      user.player_tag!
+    );
+
+    const trophyChanges = playerData.trophies - lastTrophy;
 
     return { user, trophyChanges };
+  }
+
+  public async removePlayerTag(telegram_id: number): Promise<void> {
+    await this.userDao.removePlayerTag(telegram_id);
   }
 }
 

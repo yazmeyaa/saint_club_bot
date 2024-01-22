@@ -1,5 +1,14 @@
-import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  BaseEntity,
+  PrimaryColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
 import { BattleLog } from "../BattleLog";
+import { UserTrophies } from "../UserTrophy";
 
 @Entity()
 export class User extends BaseEntity {
@@ -12,6 +21,10 @@ export class User extends BaseEntity {
   @Column("boolean", { default: false })
   admin: boolean;
 
-  @OneToMany(() => BattleLog, (battleLog) => battleLog.user)
-  battleLogs: BattleLog[];
+  @OneToMany(() => BattleLog, (battleLog) => battleLog.user, {nullable: true})
+  battleLogs: BattleLog[] | null;
+
+  @OneToOne(() => UserTrophies, {eager: true})
+  @JoinColumn()
+  trophies: UserTrophies;
 }

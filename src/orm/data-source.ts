@@ -1,14 +1,17 @@
 import "../paths";
 import { User } from "@orm/models/User";
 import { existsSync, mkdirSync } from "fs";
-import { Initdatabase1705350896162 } from "./migrations/1705350896162-initdatabase";
-import { Createbattlelog1705664224603 } from "./migrations/1705664224603-createbattlelog";
 import { homedir } from "os";
 import { join } from "path";
 import { DataSource } from "typeorm";
 import { BattleLog } from "./models/BattleLog";
+import { UserTrophies } from "./models/UserTrophy";
+
+import { Initdatabase1705350896162 } from "./migrations/1705350896162-initdatabase";
+import { Createbattlelog1705664224603 } from "./migrations/1705664224603-createbattlelog";
 import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-updateschemabattlelog";
 import { UpdateBattleLogSchema1705696256821 } from "./migrations/1705696256821-update_battle_log_schema";
+import { CreateUserTrophies1705921307447 } from "./migrations/1705921307447-createUserTrophies";
 
 const { NODE_ENV } = process.env;
 
@@ -30,8 +33,9 @@ export const AppDataSource = new DataSource({
     Createbattlelog1705664224603,
     Updateschemabattlelog1705687798028,
     UpdateBattleLogSchema1705696256821,
+    CreateUserTrophies1705921307447
   ],
-  entities: [User, BattleLog],
+  entities: [User, BattleLog, UserTrophies],
 });
 
 AppDataSource.initialize()

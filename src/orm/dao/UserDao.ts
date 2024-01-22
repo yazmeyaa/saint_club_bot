@@ -1,5 +1,6 @@
 import { AppDataSource } from "@orm/data-source";
 import { User } from "@orm/models/User";
+import { UserTrophies } from "@orm/models/UserTrophy";
 import { IsNull, Not, Repository } from "typeorm";
 
 type RemovePlayerTagResponse = Promise<User | null>;
@@ -11,13 +12,36 @@ export class UserDao {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  public async getOrCreateUser(telegram_id: number): Promise<User> {
+  public async getOrCreateUser(
+    telegram_id: number,
+    includeBattleLog: boolean = false
+  ): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { telegram_id },
-      relations: ["battleLogs"],
+      relations: {
+        battleLogs: includeBattleLog,
+      },
     });
-    if (existingUser) return existingUser;
-    return await this.userRepository.save({ telegram_id });
+
+    if (existingUser) {
+      if (existingUser.trophies === null) {
+        await this.createTrophiesForNewUser(existingUser);
+      }
+      return existingUser;
+    }
+
+    const user = this.userRepository.create({ telegram_id });
+    await this.createTrophiesForNewUser(user);
+
+    return await user.save();
+  }
+
+  private async createTrophiesForNewUser(user: User): Promise<void> {
+    const trophies = UserTrophies.create();
+    user.trophies = trophies;
+    await trophies.save();
+    await user.save();
+    return;
   }
 
   public async removePlayerTag(telegram_id: number): RemovePlayerTagResponse {
@@ -32,13 +56,16 @@ export class UserDao {
     return await this.userRepository.find({ relations: { battleLogs: logs } });
   }
 
-  public async getAllLinkedUsers(logs = false, limit?: number): Promise<User[]> {
+  public async getAllLinkedUsers(
+    logs = false,
+    limit?: number
+  ): Promise<User[]> {
     return await this.userRepository.find({
       where: {
         player_tag: Not(IsNull()),
       },
       relations: { battleLogs: logs },
-      take: limit
+      take: limit,
     });
   }
 

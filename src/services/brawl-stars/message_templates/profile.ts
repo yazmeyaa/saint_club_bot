@@ -1,7 +1,4 @@
 import { Player } from "@services/brawl-stars/api/types";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { render } from "template-file";
 
 export interface LogsObject {
   trophyChange25: number;
@@ -10,30 +7,62 @@ export interface LogsObject {
   trophyChangeMonth: number;
 }
 
-export function template_BS_profile(
+export const template_BS_profile = (
   profile: Player,
   battleResults: LogsObject
-): string {
-  const filePath = join(__dirname, "profile.template");
-  const file = readFileSync(filePath, { encoding: "utf-8" });
+): string => {
+  const header = `*${profile.name}* (${profile.tag})`;
 
-  const data = {
-    name: profile.name,
-    player_tag: profile.tag,
-    level: profile.expLevel,
-    experience: profile.expPoints,
-    club_name: profile.club.name,
-    club_tag: profile.club.tag,
-    trophies: profile.trophies,
-    highestTrophies: profile.highestTrophies,
-    trophiesDifference25: battleResults.trophyChange25,
-    trophiesDifferencedDay: battleResults.trophyChangeDay,
-    trophiesDifferenceWeek: battleResults.trophyChangeWeek,
-    trophiesDifferenceMonth: battleResults.trophyChangeMonth,
-    wins3v3: profile["3vs3Victories"],
-    soloWins: profile.soloVictories,
-    duoWins: profile.duoVictories,
-  };
+  const exp = profile.expPoints.toLocaleString();
+  const level = `🎖Уровень: ${profile.expLevel} (${exp} очков опыта)`;
 
-  return render(file, data);
-}
+  const club = profile.club ? `👾Клуб: ${profile.club.name}` : "";
+  const currentTrophies = `🏆Трофеи: ${profile.trophies} (максимум ${profile.highestTrophies})`;
+  const trophiesDifference = battleResults.trophyChange25;
+  const trophiesDifference_day = battleResults.trophyChangeDay;
+  const trophiesDifference_week = battleResults.trophyChangeWeek;
+  const trophiesDifference_month = battleResults.trophyChangeMonth;
+  const trophiesDiff = `🏆Изменение трофеев (25 игр): ${
+    trophiesDifference > 0 ? "+" + trophiesDifference : trophiesDifference
+  }🏆`;
+
+  // const winsAndLosesRow = `\`${getWinsAndLosesRow(battleResults.trophyChange25)}\``;
+
+  const trophiesDiff_day = `🏆Изменение трофеев (1 день): ${
+    trophiesDifference_day > 0
+      ? "+" + trophiesDifference_day
+      : trophiesDifference_day
+  }🏆`;
+  const trophiesDiff_week = `🏆Изменение трофеев (1 неделя): ${
+    trophiesDifference_week > 0
+      ? "+" + trophiesDifference_week
+      : trophiesDifference_week
+  }🏆`;
+  const trophiesDiff_month = `🏆Изменение трофеев (1 месяц): ${
+    trophiesDifference_month > 0
+      ? "+" + trophiesDifference_month
+      : trophiesDifference_month
+  }🏆`;
+
+  const wins3v3 = `🥇Победы 3v3: ${profile["3vs3Victories"]}`;
+  const soloWins = `🥇Победы соло: ${profile.soloVictories}`;
+  const duoWins = `🥇Победы дуо: ${profile.duoVictories}`;
+
+  return [
+    header,
+    level,
+    club,
+    "",
+    currentTrophies,
+    trophiesDiff,
+    // winsAndLosesRow,
+    "",
+    trophiesDiff_day,
+    trophiesDiff_week,
+    trophiesDiff_month,
+    "",
+    wins3v3,
+    soloWins,
+    duoWins,
+  ].join("\n");
+};

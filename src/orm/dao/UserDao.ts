@@ -60,13 +60,30 @@ export class UserDao {
     logs = false,
     limit?: number
   ): Promise<User[]> {
-    return await this.userRepository.find({
+    const users = await this.userRepository.find({
       where: {
         player_tag: Not(IsNull()),
       },
       relations: { battleLogs: logs },
       take: limit,
     });
+
+    for (const user of users) {
+      if (user.trophies !== null) {
+        if (
+          user.trophies.day === 0 &&
+          user.trophies.week === 0 &&
+          user.trophies.month === 0
+        ) {
+          await this.createTrophiesForNewUser(user);
+        }
+        continue;
+      }
+
+      await this.createTrophiesForNewUser(user);
+    }
+
+    return users;
   }
 
   public async getUserByPlayerTag(player_tag: string) {

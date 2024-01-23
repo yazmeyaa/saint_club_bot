@@ -107,11 +107,11 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, logs),
+        caption: templatesBS("profile", playerData, logs, user),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, logs), {
+      ctx.reply(templatesBS("profile", playerData, logs, user), {
         parse_mode: "Markdown",
       });
     }
@@ -144,11 +144,11 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, logs),
+        caption: templatesBS("profile", playerData, logs, user),
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, logs), {
+      ctx.reply(templatesBS("profile", playerData, logs, user), {
         parse_mode: "Markdown",
       });
     }

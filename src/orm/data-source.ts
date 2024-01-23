@@ -12,6 +12,7 @@ import { Createbattlelog1705664224603 } from "./migrations/1705664224603-createb
 import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-updateschemabattlelog";
 import { UpdateBattleLogSchema1705696256821 } from "./migrations/1705696256821-update_battle_log_schema";
 import { CreateUserTrophies1705921307447 } from "./migrations/1705921307447-createUserTrophies";
+import { AddMysteryPointsToUser1706009323551 } from "./migrations/1706009323551-addMysteryPointsToUser";
 
 const { NODE_ENV } = process.env;
 
@@ -33,7 +34,8 @@ export const AppDataSource = new DataSource({
     Createbattlelog1705664224603,
     Updateschemabattlelog1705687798028,
     UpdateBattleLogSchema1705696256821,
-    CreateUserTrophies1705921307447
+    CreateUserTrophies1705921307447,
+    AddMysteryPointsToUser1706009323551
   ],
   entities: [User, BattleLog, UserTrophies],
 });

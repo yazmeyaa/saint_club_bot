@@ -1,3 +1,4 @@
+import { User } from "@orm/models/User";
 import { Player } from "@services/brawl-stars/api/types";
 
 export interface LogsObject {
@@ -9,7 +10,8 @@ export interface LogsObject {
 
 export const template_BS_profile = (
   profile: Player,
-  battleResults: LogsObject
+  battleResults: LogsObject,
+  user: User
 ): string => {
   const header = `*${profile.name}* (${profile.tag})`;
 
@@ -48,10 +50,14 @@ export const template_BS_profile = (
   const soloWins = `🥇Победы соло: ${profile.soloVictories}`;
   const duoWins = `🥇Победы дуо: ${profile.duoVictories}`;
 
+  const { mystery_points } = user;
+  const mysteryPoints = `Загадочные очки: ${mystery_points}🔮`
+
   return [
     header,
     level,
     club,
+    mysteryPoints,
     "",
     currentTrophies,
     trophiesDiff,

@@ -21,10 +21,13 @@ export class User extends BaseEntity {
   @Column("boolean", { default: false })
   admin: boolean;
 
-  @OneToMany(() => BattleLog, (battleLog) => battleLog.user, {nullable: true})
+  @Column("integer", { default: 0 })
+  mystery_points: number;
+
+  @OneToMany(() => BattleLog, (battleLog) => battleLog.user, { nullable: true })
   battleLogs: BattleLog[] | null;
 
-  @OneToOne(() => UserTrophies, {eager: true})
+  @OneToOne(() => UserTrophies, { eager: true })
   @JoinColumn()
   trophies: UserTrophies;
 }

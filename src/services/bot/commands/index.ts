@@ -26,7 +26,7 @@ const userDao = new UserDao();
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
 brawlStarsComposer.command(/^link/, async (ctx) => {
-  const [playerTag] = ctx.args;
+    const [playerTag] = ctx.args;
 
   const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
   if (!isAdminRequest) return;

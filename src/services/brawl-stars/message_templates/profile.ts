@@ -51,7 +51,7 @@ export const template_BS_profile = (
   const duoWins = `🥇Победы дуо: ${profile.duoVictories}`;
 
   const { mystery_points } = user;
-  const mysteryPoints = `Загадочные очки: ${mystery_points}🔮`
+  const mysteryPoints = `🔮 ${mystery_points}`;
 
   return [
     header,

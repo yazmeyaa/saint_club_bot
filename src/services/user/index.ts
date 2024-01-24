@@ -101,6 +101,61 @@ export class UserService {
   public async removePlayerTag(telegram_id: number): Promise<void> {
     await this.userDao.removePlayerTag(telegram_id);
   }
+
+  public async updateMysteryPointsToUsers(): Promise<void> {
+    const dao = new UserDao();
+
+    interface Difference {
+      user: User;
+      difference: number;
+    }
+
+    const linkedUsers = await dao.getAllLinkedUsers();
+
+    const diffArr: Array<Promise<Difference>> = linkedUsers.map(
+      async (user) => {
+        const profileData = await brawlStarsService.players.getPlayerInfo(
+          user.player_tag!
+        );
+        return {
+          user,
+          difference: profileData.trophies - user.trophies.day,
+        };
+      }
+    );
+
+    const diffArrResult = await Promise.all(diffArr);
+
+    const maxTrophyDifference = Math.max(
+      ...diffArrResult.map((item) => item.difference)
+    );
+
+    const leaders = diffArrResult.filter(
+      (item) => item.difference === maxTrophyDifference
+    );
+
+    for (const leader of leaders) {
+      leader.user.mystery_points += 1;
+      await leader.user.save();
+    }
+  }
+
+  public async updateAllUsersTrophies(
+    period: "day" | "week" | "month"
+  ): Promise<void> {
+    const dao = new UserDao();
+
+    const linkedUsers = await dao.getAllLinkedUsers();
+    linkedUsers.forEach(async (user) => {
+      const profileData = await brawlStarsService.players.getPlayerInfo(
+        user.player_tag!
+      );
+
+      user.trophies[period] = profileData.trophies;
+
+      await user.trophies.save();
+    });
+  }
 }
 
 export const userService = new UserService();

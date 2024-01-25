@@ -9,10 +9,10 @@ export async function initCron() {
   cron.schedule("*/20 * * * *", battleLogService.updateUsersStat, {
     timezone: "Europe/Moscow"
   });
-  cron.schedule("0 1 * * *", () => battleLogService.removeOld(30), {
+  cron.schedule("0 0 * * *", () => battleLogService.removeOld(30), {
     timezone: "Europe/Moscow"
   });
-  cron.schedule("0 1 * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     await userService.updateMysteryPointsToUsers();
     await userService.updateAllUsersTrophies("day");
   }, {

@@ -5,7 +5,9 @@ import { TEMPALTE_PATHES } from "./consts";
 
 class BotMessageTextTemplates {
   private getTemplatePath(template: TemplateKind): string {
-    const path = resolve(join(__dirname, TEMPALTE_PATHES[template]));
+    const base = 'public/templates'
+    const path = resolve(join(base, TEMPALTE_PATHES[template]));
+    
     return path;
   }
 

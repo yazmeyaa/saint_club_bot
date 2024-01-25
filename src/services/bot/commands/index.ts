@@ -18,8 +18,8 @@ import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
-import { LogsObject } from "@services/brawl-stars/message_templates/profile";
 import { textTemplates } from "../templates";
+import { LogsObject, TopDailyPayload } from "../templates/types";
 
 const userDao = new UserDao();
 
@@ -205,19 +205,25 @@ ${clubMembersTxt}`;
 brawlStarsComposer.command(/^top_daily/, async (ctx) => {
   const users = await userService.getTopUser(5, "day");
 
-  const textArray = users.map(async (item, index) => {
-    const playerInfo = await brawlStarsService.players.getPlayerInfo(
-      item.user.player_tag!
-    );
+  const data = await Promise.all(
+    users.map(async (item, index) => {
+      const profileData = await brawlStarsService.players.getPlayerInfo(
+        item.user.player_tag!
+      );
+      return {
+        index,
+        name: profileData.name,
+        trophyChange: item.trophyChanges,
+      };
+    })
+  );
 
-    return `${index + 1}. ${playerInfo.name}: 🏆${
-      item.trophyChanges > 0 ? "+" + item.trophyChanges : item.trophyChanges
-    }`;
+  const msg = await textTemplates.getTemplate({
+    type: "TOP_DAILY",
+    payload: {
+      players: data,
+    },
   });
-
-  const stringsArr = await Promise.all(textArray);
-
-  const msg = ["🔥 Топ игроков за сегодня:", "", ...stringsArr].join("\n");
 
   return ctx.reply(msg);
 });

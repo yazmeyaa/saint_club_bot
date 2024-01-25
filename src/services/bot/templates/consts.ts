@@ -1,5 +1,6 @@
 import { TemplateKind } from "./types";
 
 export const TEMPALTE_PATHES: Record<TemplateKind, string> = {
-  PROFILE: "./profile.template",
+  PROFILE: "profile.template",
+  TOP_DAILY: "top_daily.template"
 } as const;

@@ -35,8 +35,20 @@ export type ProfilePayload = {
 };
 
 export interface ProfileTemplate extends TemplateType<ProfilePayload> {
-    type: "PROFILE";
-  }
+  type: "PROFILE";
+}
 
-export type TemplateInterface = ProfileTemplate;
+export type TopDailyPayload = {
+  players: Array<{
+    index: number;
+    name: string;
+    trophyChange: number;
+  }>;
+};
+
+export interface TopDailyTemplate extends TemplateType<TopDailyPayload> {
+  type: "TOP_DAILY"
+}
+
+export type TemplateInterface = ProfileTemplate | TopDailyTemplate;
 export type TemplateKind = TemplateInterface["type"];

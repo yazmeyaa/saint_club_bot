@@ -16,17 +16,17 @@ import {
 } from "./consts";
 import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
-import { templatesBS } from "@services/brawl-stars/message_templates";
 import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { LogsObject } from "@services/brawl-stars/message_templates/profile";
+import { textTemplates } from "../templates";
 
 const userDao = new UserDao();
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
 brawlStarsComposer.command(/^link/, async (ctx) => {
-    const [playerTag] = ctx.args;
+  const [playerTag] = ctx.args;
 
   const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
   if (!isAdminRequest) return;
@@ -104,14 +104,22 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
     );
 
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
+    const text = await textTemplates.getTemplate({
+      type: "PROFILE",
+      payload: {
+        ...playerData,
+        ...logs,
+        mystery_points: user.mystery_points,
+      },
+    });
 
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, logs, user),
+        caption: text,
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, logs, user), {
+      ctx.reply(text, {
         parse_mode: "Markdown",
       });
     }
@@ -141,14 +149,23 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
       trophyChangeMonth: playerData.trophies - user.trophies.month,
     };
 
+    const text = await textTemplates.getTemplate({
+      type: "PROFILE",
+      payload: {
+        ...playerData,
+        ...logs,
+        mystery_points: user.mystery_points,
+      },
+    });
+
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
     if (icon) {
       return ctx.replyWithPhoto(icon, {
-        caption: templatesBS("profile", playerData, logs, user),
+        caption: text,
         parse_mode: "Markdown",
       });
     } else {
-      ctx.reply(templatesBS("profile", playerData, logs, user), {
+      ctx.reply(text, {
         parse_mode: "Markdown",
       });
     }

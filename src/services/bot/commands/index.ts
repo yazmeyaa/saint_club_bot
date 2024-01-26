@@ -20,9 +20,9 @@ import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
 import { LogsObject } from "../templates/types";
-import { mapsDrawer } from "@services/brawl-stars/maps";
 import htmlToImage from "node-html-to-image";
 import { renderFile } from "template-file";
+import puppeeterCore from 'puppeteer-core'
 
 const userDao = new UserDao();
 
@@ -253,6 +253,7 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     html,
     quality: 100,
     type: "png",
+    puppeteer: [puppeeterCore],
     puppeteerArgs: {
       headless: false,
       args: ["--no-sandbox"]

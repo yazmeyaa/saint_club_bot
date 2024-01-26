@@ -253,6 +253,9 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     html,
     quality: 100,
     type: "png",
+    puppeteerArgs: {
+      headless: true
+    }
   });
 
   if (image instanceof Buffer)

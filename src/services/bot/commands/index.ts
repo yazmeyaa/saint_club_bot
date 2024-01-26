@@ -257,8 +257,6 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     puppeteerArgs:
       process.env.NODE_ENV === "production"
         ? {
-            headless: false,
-            args: ["--no-sandbox"],
             executablePath: "/usr/bin/chromium-browser",
           }
         : undefined,

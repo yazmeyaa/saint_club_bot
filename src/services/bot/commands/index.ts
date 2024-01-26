@@ -191,13 +191,15 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
     return ctx.reply("Пользователь не состоит в клубе");
   }
 
-  const clubMembersTxt = await transformClubMembers(members);
+  const clubMembersPayload = await transformClubMembers(members);
 
-  const msg = `Клуб: ${clubData.name}
-Всего кубков: ${clubData.trophies}
-
-Участники:
-${clubMembersTxt}`;
+  const msg = await textTemplates.getTemplate({
+    type: "CLUB_LIST",
+    payload: {
+      club: clubData,
+      members: clubMembersPayload,
+    },
+  });
 
   return ctx.reply(msg, { parse_mode: "Markdown" });
 });

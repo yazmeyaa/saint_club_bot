@@ -1,0 +1,5 @@
+Клуб: {{club.name}}
+Всего кубков: {{club.trophies}}
+
+Участники:
+{{#members}}{{name}} ({{tag}}){{/members}}

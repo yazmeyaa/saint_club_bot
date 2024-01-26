@@ -1,6 +1,7 @@
 import { User } from "@orm/models/User";
 import { ClubMemberList } from "@services/brawl-stars/api/types/club";
 import { In } from "typeorm";
+import { ClubListPayload } from "./templates/types";
 
 export async function checkIsAdmin(telegram_id: number): Promise<boolean> {
   const user = await User.findOne({ where: { telegram_id: telegram_id } });
@@ -16,9 +17,8 @@ export function isValidPlayerTag(playerTag: string) {
 
 export async function transformClubMembers(
   members: ClubMemberList
-): Promise<string> {
-  const membersStrings: string[] = [];
-
+): Promise<ClubListPayload["members"]> {
+  const result: ClubListPayload["members"] = [];
   const membersTags = members.map((item) => item.tag);
 
   const findMembers = await User.find({
@@ -30,13 +30,14 @@ export async function transformClubMembers(
   for (const member of members) {
     const user = findMembers.find((item) => item.player_tag === member.tag);
     if (user)
-      membersStrings.push(
-        createMention(member.name, user.telegram_id) + ` (${member.tag})`
-      );
-    else membersStrings.push(member.name + ` (${member.tag})`);
+      result.push({
+        name: createMention(member.name, user.telegram_id),
+        tag: member.tag,
+      });
+    else result.push({ ...member });
   }
 
-  return membersStrings.join("\n");
+  return result;
 }
 
 export function createMention(name: string, user_id: number) {

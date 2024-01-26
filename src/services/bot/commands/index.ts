@@ -20,9 +20,8 @@ import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
 import { LogsObject } from "../templates/types";
-import htmlToImage from "node-html-to-image";
 import { renderFile } from "template-file";
-import puppeeterCore from "puppeteer-core";
+import htmlToImage from "node-html-to-image";
 
 const userDao = new UserDao();
 
@@ -234,38 +233,37 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
 });
 
 brawlStarsComposer.command(/^events/, async (ctx) => {
-  const events = await brawlStarsService.events.getEventsBrawlify();
+  try {
+    const events = await brawlStarsService.events.getEventsBrawlify();
 
-  const mapsPayload = events.active.map((event) => {
-    return {
-      bgColor: event.map.gameMode.bgColor,
-      color: event.map.gameMode.color,
-      eventName: event.map.gameMode.name,
-      mapName: event.map.name,
-      mapImgSrc: event.map.imageUrl,
-    };
-  });
-
-  const html = await renderFile("./public/htmlTemplates/events.html", {
-    maps: mapsPayload,
-  });
-  const image = await htmlToImage({
-    html,
-    quality: 100,
-    type: "png",
-    puppeteer: [puppeeterCore],
-    puppeteerArgs:
-      process.env.NODE_ENV === "production"
-        ? {
-            headless: true,
-            args: ["--no-sandbox"],
-            executablePath: "/usr/bin/chromium-browser",
-          }
-        : undefined,
-  });
-
-  if (image instanceof Buffer)
-    ctx.sendPhoto({
-      source: image,
+    const mapsPayload = events.active.map((event) => {
+      return {
+        bgColor: event.map.gameMode.bgColor,
+        color: event.map.gameMode.color,
+        eventName: event.map.gameMode.name,
+        mapName: event.map.name,
+        mapImgSrc: event.map.imageUrl,
+      };
     });
+
+    const html = await renderFile("./public/htmlTemplates/events.html", {
+      maps: mapsPayload,
+    });
+    const image = await htmlToImage({
+      html,
+      quality: 100,
+      type: "png",
+      puppeteerArgs: {
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      },
+    });
+
+    if (image instanceof Buffer)
+      ctx.sendPhoto({
+        source: image,
+      });
+  } catch (error) {
+    console.log(error);
+  }
 });

@@ -1,6 +1,6 @@
 import { battleLogService } from "@services/battle-logs";
 import { userService } from "@services/user";
-import cron from "node-cron";
+import * as cron from "node-cron";
 
 export async function initCron() {
   await battleLogService.updateUsersStat();

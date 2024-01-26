@@ -20,6 +20,7 @@ import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
 import { LogsObject, TopDailyPayload } from "../templates/types";
+import { mapsDrawer } from "@services/brawl-stars/maps";
 
 const userDao = new UserDao();
 
@@ -228,4 +229,21 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
   });
 
   return ctx.reply(msg);
+});
+
+brawlStarsComposer.command(/^events/, async (ctx) => {
+  const events = await brawlStarsService.events.getEventsBrawlify();
+
+  const stream = await mapsDrawer.drawEvents(events.active);
+
+  const msg = events.active.map((item, index) => {
+    return `${index + 1}. Режим: ${item.map.gameMode.name}
+Карта: ${item.map.name}`;
+  });
+
+  return ctx.sendPhoto({
+    source: stream
+  }, {
+    caption: msg.join("\n\n")
+  });
 });

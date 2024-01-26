@@ -1,22 +1,31 @@
-import { SheduledEvents } from "@services/brawl-stars/api/types/rotation"
-import { BrawlStarsService } from "./service"
-import axios from "axios"
+import {
+  BrawlifyEventsResponse,
+  SheduledEvents,
+} from "@services/brawl-stars/api/types/rotation";
+import { BrawlStarsService } from "./service";
+import axios from "axios";
 
 class Events {
-    root: BrawlStarsService
+  root: BrawlStarsService;
 
-    constructor(root: BrawlStarsService) {
-        this.root = root
-    }
+  constructor(root: BrawlStarsService) {
+    this.root = root;
+  }
 
-    getRotation = async (): Promise<SheduledEvents> => {
-        const url = this.root.getUrl() + "/events/rotation"
-        const request = await axios.get<SheduledEvents>(url, {
-            headers: this.root.getHeaders()
-        })
-        return request.data
-    }
+  getRotation = async (): Promise<SheduledEvents> => {
+    const url = this.root.getUrl() + "/events/rotation";
+    const request = await axios.get<SheduledEvents>(url, {
+      headers: this.root.getHeaders(),
+    });
+    return request.data;
+  };
 
+  getEventsBrawlify = async (): Promise<BrawlifyEventsResponse> => {
+    const url = "https://api.brawlapi.com/v1/events";
+    const request = await axios.get<BrawlifyEventsResponse>(url);
+
+    return request.data;
+  };
 }
 
-export { Events }
+export { Events };

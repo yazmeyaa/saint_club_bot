@@ -254,7 +254,8 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     quality: 100,
     type: "png",
     puppeteerArgs: {
-      headless: true
+      headless: false,
+      args: ["--no-sandbox"]
     }
   });
 

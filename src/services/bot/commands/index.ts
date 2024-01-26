@@ -22,7 +22,7 @@ import { textTemplates } from "../templates";
 import { LogsObject } from "../templates/types";
 import htmlToImage from "node-html-to-image";
 import { renderFile } from "template-file";
-import puppeeterCore from 'puppeteer-core'
+import puppeeterCore from "puppeteer-core";
 
 const userDao = new UserDao();
 
@@ -254,10 +254,14 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     quality: 100,
     type: "png",
     puppeteer: [puppeeterCore],
-    puppeteerArgs: {
-      headless: false,
-      args: ["--no-sandbox"]
-    }
+    puppeteerArgs:
+      process.env.NODE_ENV === "production"
+        ? {
+            headless: false,
+            args: ["--no-sandbox"],
+            executablePath: "/usr/bin/chromium-browser",
+          }
+        : undefined,
   });
 
   if (image instanceof Buffer)

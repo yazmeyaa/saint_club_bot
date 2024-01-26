@@ -19,8 +19,10 @@ import { brawlStarsService } from "@services/brawl-stars/api";
 import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
-import { LogsObject, TopDailyPayload } from "../templates/types";
+import { LogsObject } from "../templates/types";
 import { mapsDrawer } from "@services/brawl-stars/maps";
+import htmlToImage from 'node-html-to-image'
+import { renderFile } from "template-file";
 
 const userDao = new UserDao();
 
@@ -234,6 +236,8 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
 brawlStarsComposer.command(/^events/, async (ctx) => {
   const events = await brawlStarsService.events.getEventsBrawlify();
 
+  console.log(events.active[0].map.gameMode.bgColor)
+
   const stream = await mapsDrawer.drawEvents(events.active);
 
   const msg = events.active.map((item, index) => {
@@ -247,3 +251,31 @@ brawlStarsComposer.command(/^events/, async (ctx) => {
     caption: msg.join("\n\n")
   });
 });
+
+brawlStarsComposer.command(/^test/, async (ctx) => {
+
+  const events = await brawlStarsService.events.getEventsBrawlify();
+
+  const mapsPayload = events.active.map(event => {
+    return {
+      bgColor: event.map.gameMode.bgColor,
+      color: event.map.gameMode.color,
+      eventName: event.map.gameMode.name,
+      mapName: event.map.name,
+      mapImgSrc: event.map.imageUrl
+    }
+  })
+
+  const html = await renderFile('./public/htmlTemplates/events.html', {
+    maps: mapsPayload
+  });
+  const image = await htmlToImage({
+    html,
+    quality: 100,
+    type: 'png'
+  })
+
+  if(image instanceof Buffer) ctx.sendPhoto({
+    source: image
+  })
+})

@@ -215,7 +215,7 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
         item.user.player_tag!
       );
       return {
-        index,
+        index: index + 1,
         name: profileData.name,
         trophyChange: item.trophyChanges,
       };

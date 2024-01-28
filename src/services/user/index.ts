@@ -9,12 +9,15 @@ import {
 
 type GetClubMembersResponse = Promise<ClubMemberList | null>;
 type UserClubInfoResponse = Promise<BrawlStarsClub | null>;
-type UserTopResponse = Promise<
-  Array<{
-    user: User;
-    trophyChanges: number;
-  }>
->;
+type UserTopResponse = Promise<Array<{
+  user: User;
+  trophyChanges: number;
+}> | null>;
+type UserWithStats = {
+  user: User;
+  trophyChanges: number;
+};
+
 export class UserService {
   private userDao = new UserDao();
 
@@ -62,6 +65,7 @@ export class UserService {
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag
     );
+    if (!playerData) return;
     user.trophies.day =
       user.trophies.week =
       user.trophies.month =
@@ -76,12 +80,11 @@ export class UserService {
     const users = await this.userDao.getAllLinkedUsers(false);
     console.log(users[0]);
 
-    const usersWithStats = await Promise.all(
+    const _usersWithStats = await Promise.all(
       users.map((item) => this.getUserTrophyChangeByPeriod(item, period))
     );
 
-    console.log({ usersWithStats });
-
+    const usersWithStats = _usersWithStats.filter(Boolean) as UserWithStats[];
     return usersWithStats
       .sort((a, b) => b.trophyChanges - a.trophyChanges)
       .slice(0, limit);
@@ -95,6 +98,7 @@ export class UserService {
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag!
     );
+    if (!playerData) return null;
 
     const trophyChanges = playerData.trophies - lastTrophy;
 
@@ -115,11 +119,12 @@ export class UserService {
 
     const linkedUsers = await dao.getAllLinkedUsers();
 
-    const diffArr: Array<Promise<Difference>> = linkedUsers.map(
+    const diffArr: Array<Promise<Difference | null>> = linkedUsers.map(
       async (user) => {
         const profileData = await brawlStarsService.players.getPlayerInfo(
           user.player_tag!
         );
+        if (!profileData) return null;
         return {
           user,
           difference: profileData.trophies - user.trophies.day,
@@ -127,7 +132,8 @@ export class UserService {
       }
     );
 
-    const diffArrResult = await Promise.all(diffArr);
+    const _diffArrResult = await Promise.all(diffArr);
+    const diffArrResult = _diffArrResult.filter(Boolean) as Difference[];
 
     const maxTrophyDifference = Math.max(
       ...diffArrResult.map((item) => item.difference)
@@ -149,15 +155,18 @@ export class UserService {
     const dao = new UserDao();
 
     const linkedUsers = await dao.getAllLinkedUsers();
-    linkedUsers.forEach(async (user) => {
+
+    for (const user of linkedUsers) {
       const profileData = await brawlStarsService.players.getPlayerInfo(
         user.player_tag!
       );
 
+      if (!profileData) continue;
+
       user.trophies[period] = profileData.trophies;
 
       await user.trophies.save();
-    });
+    }
   }
 }
 

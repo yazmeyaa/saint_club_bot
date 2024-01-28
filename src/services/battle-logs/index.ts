@@ -19,6 +19,8 @@ export class BattleLogService {
       player_tag
     );
 
+    if (!battleLog) return;
+
     await this.battleLogDao.load(user, battleLog.items);
   }
 
@@ -40,7 +42,6 @@ export class BattleLogService {
   public async removeOld(days: number = 30) {
     return await this.battleLogDao.removeOld(days);
   }
-
 }
 
 export const battleLogService = new BattleLogService();

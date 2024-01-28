@@ -47,7 +47,8 @@ class Players {
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`);
+        logger.error(error.message)
+        return null;
       } else {
         logger.error(
           BrawlStarsService.getDefaultErrorText("get player battle log")

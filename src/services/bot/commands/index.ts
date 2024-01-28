@@ -19,7 +19,7 @@ import { brawlStarsService } from "@services/brawl-stars/api";
 import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
-import { LogsObject } from "../templates/types";
+import { LogsObject, TopDailyPayload } from "../templates/types";
 import { renderFile } from "template-file";
 import htmlToImage from "node-html-to-image";
 
@@ -94,6 +94,8 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
     user.player_tag
   );
 
+  if (!playerData) return ctx.reply(NOT_FOUND_USER_MESSAGE);
+
   const logs: LogsObject = {
     trophyChange25: 0,
     trophyChangeDay: playerData.trophies - user.trophies.day,
@@ -101,10 +103,6 @@ brawlStarsComposer.command(/^profile/, async (ctx) => {
     trophyChangeMonth: playerData.trophies - user.trophies.month,
   };
   try {
-    const playerData = await brawlStarsService.players.getPlayerInfo(
-      user.player_tag
-    );
-
     const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
     const text = await textTemplates.getTemplate({
       type: "PROFILE",
@@ -143,6 +141,7 @@ brawlStarsComposer.command(/^me/, async (ctx) => {
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag
     );
+    if (!playerData) return ctx.reply(NOT_FOUND_USER_MESSAGE);
 
     const logs: LogsObject = {
       trophyChange25: 0,
@@ -209,11 +208,15 @@ brawlStarsComposer.command(/^club_list/, async (ctx) => {
 brawlStarsComposer.command(/^top_daily/, async (ctx) => {
   const users = await userService.getTopUser(5, "day");
 
-  const data = await Promise.all(
+  if (!users) return ctx.reply("Не удалось получить список пользователей");
+
+  const _data = await Promise.all(
     users.map(async (item, index) => {
       const profileData = await brawlStarsService.players.getPlayerInfo(
         item.user.player_tag!
       );
+
+      if (!profileData) return null;
       return {
         index: index + 1,
         name: profileData.name,
@@ -221,6 +224,8 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
       };
     })
   );
+
+  const data = _data.filter(Boolean) as TopDailyPayload["players"];
 
   const msg = await textTemplates.getTemplate({
     type: "TOP_DAILY",

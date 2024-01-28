@@ -16,6 +16,8 @@ async function fixEmptyTrophies() {
       const playerData = await brawlStarsService.players.getPlayerInfo(
         user.player_tag!
       );
+      if (!playerData) continue;
+
       user.trophies.day =
         user.trophies.week =
         user.trophies.month =

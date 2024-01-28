@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import { BrawlStarsService } from "./service";
 import { Player } from "@services/brawl-stars/api/types";
 import { logger } from "@helpers/logs";
@@ -40,7 +40,11 @@ export class Icons {
 
   public async getIconsList(): Promise<IconsResponseType | null> {
     try {
-      const request = await axios.get<IconsResponseType>(this.iconListUrl);
+      const request = await axios.get<IconsResponseType>(this.iconListUrl, {
+        headers: {
+          "Cache-Control": "private, max-age=300", //5 min cache
+        },
+      });
       return request.data;
     } catch (err) {
       if (err instanceof Error) {

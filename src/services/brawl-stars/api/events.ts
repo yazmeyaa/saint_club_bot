@@ -25,7 +25,7 @@ class Events {
       if (err instanceof Error) {
         logger.error(err.message);
       } else {
-        logger.error(BrawlStarsService.getDefaultError("get rotation"));
+        logger.error(BrawlStarsService.getDefaultErrorText("get rotation"));
       }
 
       return null;
@@ -42,7 +42,7 @@ class Events {
       if (err instanceof Error) {
         logger.error(err.message);
       } else {
-        logger.error(BrawlStarsService.getDefaultError("get rotation"));
+        logger.error(BrawlStarsService.getDefaultErrorText("get rotation"));
       }
 
       return null;

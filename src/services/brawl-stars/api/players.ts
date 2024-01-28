@@ -1,7 +1,8 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { Player } from "@services/brawl-stars/api/types/player";
 import { BrawlStarsService } from "./service";
 import { BattleLogResponse } from "@services/brawl-stars/api/types";
+import { logger } from "@helpers/logs";
 
 class Players {
   private root: BrawlStarsService;
@@ -11,7 +12,7 @@ class Players {
     this.baseUrl = root.getUrl() + "/players/";
   }
 
-  getPlayerInfo = async (playerTag: string): Promise<Player> => {
+  public async getPlayerInfo(playerTag: string): Promise<Player | null> {
     const config: AxiosRequestConfig = {
       headers: this.root.getHeaders(),
     };
@@ -20,24 +21,21 @@ class Players {
     try {
       const response = await axios.get<Player>(url, config);
 
-      if (!response.data)
-        throw new Error(`Player with tag ${playerTag} is not found`);
-
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`);
+        logger.error(error.message);
+      } else {
+        logger.error(BrawlStarsService.getDefaultErrorText("get player info"));
       }
-      if (error instanceof AxiosError) {
-        throw new Error(`Error: ${error.message}`);
-      }
-      throw new Error("Error: Unexpected error!");
-    }
-  };
 
-  getPlayerBattleLog = async (
+      return null;
+    }
+  }
+
+  public async getPlayerBattleLog(
     playerTag: string
-  ): Promise<BattleLogResponse> => {
+  ): Promise<BattleLogResponse | null> {
     const config: AxiosRequestConfig = {
       headers: this.root.getHeaders(),
     };
@@ -46,19 +44,18 @@ class Players {
     try {
       const response = await axios.get<BattleLogResponse>(url, config);
 
-      if (!response.data)
-        throw new Error(`Player with tag ${playerTag} is not found`);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error: ${error.message}`);
+      } else {
+        logger.error(
+          BrawlStarsService.getDefaultErrorText("get player battle log")
+        );
       }
-      if (error instanceof AxiosError) {
-        throw new Error(`Error: ${error.message}`);
-      }
-      throw new Error("Error: Unexpected error!");
+      return null;
     }
-  };
+  }
 }
 
 export { Players };

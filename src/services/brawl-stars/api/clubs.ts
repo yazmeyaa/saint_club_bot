@@ -42,7 +42,7 @@ class Clubs {
       if (error instanceof Error) {
         logger.error(error.message);
       } else {
-        logger.error(BrawlStarsService.getDefaultError("club info"));
+        logger.error(BrawlStarsService.getDefaultErrorText("club info"));
       }
       return null;
     }
@@ -70,7 +70,7 @@ class Clubs {
         logger.error(error.message);
       }
 
-      logger.error(BrawlStarsService.getDefaultError("club members"))
+      logger.error(BrawlStarsService.getDefaultErrorText("club members"))
 
       return null;
     }

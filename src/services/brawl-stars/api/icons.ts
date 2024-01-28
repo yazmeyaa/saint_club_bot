@@ -1,6 +1,7 @@
 import axios from "axios";
 import { BrawlStarsService } from "./service";
 import { Player } from "@services/brawl-stars/api/types";
+import { logger } from "@helpers/logs";
 
 type PlayerIcons = Record<number, PlayerIcon>;
 
@@ -37,13 +38,24 @@ export class Icons {
     this.root = root;
   }
 
-  public async getIconsList(): Promise<IconsResponseType> {
-    const request = await axios.get<IconsResponseType>(this.iconListUrl);
-    return request.data;
+  public async getIconsList(): Promise<IconsResponseType | null> {
+    try {
+      const request = await axios.get<IconsResponseType>(this.iconListUrl);
+      return request.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        logger.error(err.message);
+      } else {
+        logger.error(BrawlStarsService.getDefaultErrorText("get rotation"));
+      }
+
+      return null;
+    }
   }
 
   public async getProfileIconUrl(profile: Player): Promise<string | null> {
     const response = await this.getIconsList();
+    if (!response) return null;
     const icon = response.player[Number(profile.icon.id)];
     return icon.imageUrl ?? icon.imageUrl2 ?? null;
   }

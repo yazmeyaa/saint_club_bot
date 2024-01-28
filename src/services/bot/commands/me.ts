@@ -1,16 +1,14 @@
 import { userService } from "@services/user";
-import { Composer, Context } from "telegraf";
+import { Composer } from "telegraf";
 import {
   CANNOT_GET_PROFILE_DATA_MESSAGE,
   NOT_FOUND_USER_MESSAGE,
   NOT_LINKED_USER_MESSAGE,
 } from "./consts";
-import { Update } from "telegraf/typings/core/types/typegram";
 import { getProfileData } from "../helpers";
+import { CommandType } from ".";
 
-export const meCommandComposer: Composer<Context<Update>> = new Composer();
-
-meCommandComposer.command(/^me/, async (ctx) => {
+export const meCommand: CommandType = Composer.command(/^me/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;
 
   const user = await userService.getOrCreateUser(telegram_id);

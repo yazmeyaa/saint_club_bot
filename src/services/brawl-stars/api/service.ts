@@ -1,5 +1,5 @@
 import { AxiosHeaders } from "axios";
-import { Clubs, GetClanMembersOptions } from "./clubs";
+import { Clubs } from "./clubs";
 import { Players } from "./players";
 import { environments } from "@config/env";
 import { Brawlers } from "./brawlers";

@@ -4,6 +4,7 @@ import {
 } from "@services/brawl-stars/api/types/rotation";
 import { BrawlStarsService } from "./service";
 import axios from "axios";
+import { logger } from "@helpers/logs";
 
 class Events {
   root: BrawlStarsService;
@@ -12,20 +13,41 @@ class Events {
     this.root = root;
   }
 
-  getRotation = async (): Promise<SheduledEvents> => {
+  public async getRotation(): Promise<SheduledEvents | null> {
     const url = this.root.getUrl() + "/events/rotation";
-    const request = await axios.get<SheduledEvents>(url, {
-      headers: this.root.getHeaders(),
-    });
-    return request.data;
-  };
 
-  getEventsBrawlify = async (): Promise<BrawlifyEventsResponse> => {
+    try {
+      const request = await axios.get<SheduledEvents>(url, {
+        headers: this.root.getHeaders(),
+      });
+      return request.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        logger.error(err.message);
+      } else {
+        logger.error(BrawlStarsService.getDefaultError("get rotation"));
+      }
+
+      return null;
+    }
+  }
+
+  public async getEventsBrawlify(): Promise<BrawlifyEventsResponse | null> {
     const url = "https://api.brawlapi.com/v1/events";
-    const request = await axios.get<BrawlifyEventsResponse>(url);
+    try {
+      const request = await axios.get<BrawlifyEventsResponse>(url);
 
-    return request.data;
-  };
+      return request.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        logger.error(err.message);
+      } else {
+        logger.error(BrawlStarsService.getDefaultError("get rotation"));
+      }
+
+      return null;
+    }
+  }
 }
 
 export { Events };

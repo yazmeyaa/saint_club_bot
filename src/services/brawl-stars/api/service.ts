@@ -31,6 +31,10 @@ export class BrawlStarsService {
     this.icons = new Icons(this);
   }
 
+  static getDefaultError(what: string) {
+    return `Unexpected error while processing ${what}`;
+  }
+
   getHeaders() {
     return this.baseHeaders;
   }

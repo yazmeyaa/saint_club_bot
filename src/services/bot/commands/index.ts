@@ -235,6 +235,7 @@ brawlStarsComposer.command(/^top_daily/, async (ctx) => {
 brawlStarsComposer.command(/^events/, async (ctx) => {
   try {
     const events = await brawlStarsService.events.getEventsBrawlify();
+    if (!events) return ctx.reply("Не удалось получить список событий!");
 
     const mapsPayload = events.active.map((event) => {
       return {

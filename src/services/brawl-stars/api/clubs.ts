@@ -28,10 +28,6 @@ class Clubs {
     this.root = root;
   }
 
-  private getDefaultError(what: string) {
-    return `Unexpected error while processing ${what}`;
-  }
-
   public async getClanInfo(clubTag: string): Promise<BrawlStarsClub | null> {
     try {
       const url = this.root.getUrl() + endpoints.getClubInfo(clubTag);
@@ -46,7 +42,7 @@ class Clubs {
       if (error instanceof Error) {
         logger.error(error.message);
       } else {
-        logger.error(this.getDefaultError("club info"));
+        logger.error(BrawlStarsService.getDefaultError("club info"));
       }
       return null;
     }
@@ -74,7 +70,7 @@ class Clubs {
         logger.error(error.message);
       }
 
-      logger.error(this.getDefaultError("club members"))
+      logger.error(BrawlStarsService.getDefaultError("club members"))
 
       return null;
     }

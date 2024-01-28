@@ -3,11 +3,9 @@ import {
   Column,
   BaseEntity,
   PrimaryColumn,
-  OneToMany,
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { BattleLog } from "../BattleLog";
 import { UserTrophies } from "../UserTrophy";
 
 @Entity()
@@ -23,9 +21,6 @@ export class User extends BaseEntity {
 
   @Column("integer", { default: 0 })
   mystery_points: number;
-
-  @OneToMany(() => BattleLog, (battleLog) => battleLog.user, { nullable: true })
-  battleLogs: BattleLog[] | null;
 
   @OneToOne(() => UserTrophies, { eager: true })
   @JoinColumn()

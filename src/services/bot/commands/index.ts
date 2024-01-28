@@ -1,180 +1,25 @@
-import {
-  checkIsAdmin,
-  isValidPlayerTag,
-  transformClubMembers,
-} from "@services/bot/helpers";
+import { transformClubMembers } from "@services/bot/helpers";
 import { Composer, Context } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
-import {
-  CANNOT_GET_PROFILE_DATA_MESSAGE,
-  COMMAND_EXECUTED_MESSAGE,
-  COMMAND_NOT_EXECUTE_MESSAGE,
-  INVALID_TAG_MESSAGE,
-  NOT_FOUND_USER_MESSAGE,
-  NOT_LINKED_USER_MESSAGE,
-  NO_REPLY_TARGET_MESSAGE,
-} from "./consts";
+import { NOT_FOUND_USER_MESSAGE, NOT_LINKED_USER_MESSAGE } from "./consts";
 import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
-import { UserDao } from "@orm/dao/UserDao";
 import { userService } from "@services/user";
 import { textTemplates } from "../templates";
-import { LogsObject, TopDailyPayload } from "../templates/types";
+import { TopDailyPayload } from "../templates/types";
 import { renderFile } from "template-file";
 import htmlToImage from "node-html-to-image";
-
-const userDao = new UserDao();
+import { meCommandComposer } from "./me";
+import { profileCommandComposer } from "./profile";
+import { linkCommandComposer } from "./link";
+import { unlinkCommandComposer } from "./unlink";
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 
-brawlStarsComposer.command(/^link/, async (ctx) => {
-  const [playerTag] = ctx.args;
-
-  const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
-  if (!isAdminRequest) return;
-
-  if (!isValidPlayerTag(playerTag)) {
-    return ctx.reply(INVALID_TAG_MESSAGE);
-  }
-
-  //forum_topic_created
-  if (
-    typeof ctx.update.message === "undefined" ||
-    typeof ctx.update.message.reply_to_message === "undefined" ||
-    typeof ctx.update.message.reply_to_message.from === "undefined" ||
-    "forum_topic_created" in ctx.update.message.reply_to_message
-  ) {
-    return ctx.reply(NO_REPLY_TARGET_MESSAGE);
-  }
-
-  const targetId = ctx.update.message.reply_to_message.from.id;
-
-  try {
-    const user = await userService.getOrCreateUser(targetId);
-    user.player_tag = playerTag;
-    await user.save();
-    await userService.updateUserTrophies(user);
-
-    ctx.reply(COMMAND_EXECUTED_MESSAGE);
-  } catch (err) {
-    console.error(err);
-    ctx.reply(COMMAND_NOT_EXECUTE_MESSAGE);
-  }
-});
-
-brawlStarsComposer.command(/^unlink/, async (ctx) => {
-  const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
-  if (!isAdminRequest) return;
-
-  const target_id = ctx.message.reply_to_message?.from?.id;
-  if (!target_id) return ctx.reply(NO_REPLY_TARGET_MESSAGE);
-  await userService.removePlayerTag(target_id);
-
-  ctx.reply("ok");
-});
-
-brawlStarsComposer.command(/^profile/, async (ctx) => {
-  const target_id = ctx.update.message.reply_to_message?.from?.id;
-  if (
-    typeof ctx.update.message === "undefined" ||
-    typeof ctx.update.message.reply_to_message === "undefined" ||
-    typeof ctx.update.message.reply_to_message.from === "undefined" ||
-    "forum_topic_created" in ctx.update.message.reply_to_message ||
-    !target_id
-  ) {
-    return ctx.reply(NO_REPLY_TARGET_MESSAGE);
-  }
-
-  const user = await userDao.getOrCreateUser(target_id);
-
-  if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
-  if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
-
-  const playerData = await brawlStarsService.players.getPlayerInfo(
-    user.player_tag
-  );
-
-  if (!playerData) return ctx.reply(NOT_FOUND_USER_MESSAGE);
-
-  const logs: LogsObject = {
-    trophyChange25: 0,
-    trophyChangeDay: playerData.trophies - user.trophies.day,
-    trophyChangeWeek: playerData.trophies - user.trophies.week,
-    trophyChangeMonth: playerData.trophies - user.trophies.month,
-  };
-  try {
-    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
-    const text = await textTemplates.getTemplate({
-      type: "PROFILE",
-      payload: {
-        ...playerData,
-        ...logs,
-        mystery_points: user.mystery_points,
-      },
-    });
-
-    if (icon) {
-      return ctx.replyWithPhoto(icon, {
-        caption: text,
-        parse_mode: "Markdown",
-      });
-    } else {
-      ctx.reply(text, {
-        parse_mode: "Markdown",
-      });
-    }
-  } catch (err) {
-    console.error(err);
-    return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
-  }
-});
-
-brawlStarsComposer.command(/^me/, async (ctx) => {
-  const telegram_id = ctx.update.message.from.id;
-
-  const user = await userService.getOrCreateUser(telegram_id);
-
-  if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
-  if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
-
-  try {
-    const playerData = await brawlStarsService.players.getPlayerInfo(
-      user.player_tag
-    );
-    if (!playerData) return ctx.reply(NOT_FOUND_USER_MESSAGE);
-
-    const logs: LogsObject = {
-      trophyChange25: 0,
-      trophyChangeDay: playerData.trophies - user.trophies.day,
-      trophyChangeWeek: playerData.trophies - user.trophies.week,
-      trophyChangeMonth: playerData.trophies - user.trophies.month,
-    };
-
-    const text = await textTemplates.getTemplate({
-      type: "PROFILE",
-      payload: {
-        ...playerData,
-        ...logs,
-        mystery_points: user.mystery_points,
-      },
-    });
-
-    const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
-    if (icon) {
-      return ctx.replyWithPhoto(icon, {
-        caption: text,
-        parse_mode: "Markdown",
-      });
-    } else {
-      ctx.reply(text, {
-        parse_mode: "Markdown",
-      });
-    }
-  } catch (err) {
-    console.error(err);
-    return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
-  }
-});
+brawlStarsComposer.use(linkCommandComposer);
+brawlStarsComposer.use(unlinkCommandComposer);
+brawlStarsComposer.use(profileCommandComposer);
+brawlStarsComposer.use(meCommandComposer);
 
 brawlStarsComposer.command(/^club_list/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;

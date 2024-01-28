@@ -4,7 +4,6 @@ import { existsSync, mkdirSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import { DataSource } from "typeorm";
-import { BattleLog } from "./models/BattleLog";
 import { UserTrophies } from "./models/UserTrophy";
 
 import { Initdatabase1705350896162 } from "./migrations/1705350896162-initdatabase";
@@ -37,7 +36,7 @@ export const AppDataSource = new DataSource({
     CreateUserTrophies1705921307447,
     AddMysteryPointsToUser1706009323551
   ],
-  entities: [User, BattleLog, UserTrophies],
+  entities: [User, UserTrophies],
 });
 
 AppDataSource.initialize()

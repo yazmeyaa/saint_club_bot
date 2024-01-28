@@ -12,15 +12,9 @@ export class UserDao {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  public async getOrCreateUser(
-    telegram_id: number,
-    includeBattleLog: boolean = false
-  ): Promise<User> {
+  public async getOrCreateUser(telegram_id: number): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { telegram_id },
-      relations: {
-        battleLogs: includeBattleLog,
-      },
     });
 
     if (existingUser) {
@@ -52,19 +46,15 @@ export class UserDao {
     return await user.save();
   }
 
-  public async getAllUsers(logs = false): Promise<User[]> {
-    return await this.userRepository.find({ relations: { battleLogs: logs } });
+  public async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  public async getAllLinkedUsers(
-    logs = false,
-    limit?: number
-  ): Promise<User[]> {
+  public async getAllLinkedUsers(limit?: number): Promise<User[]> {
     const users = await this.userRepository.find({
       where: {
         player_tag: Not(IsNull()),
       },
-      relations: { battleLogs: logs },
       take: limit,
     });
 
@@ -89,9 +79,6 @@ export class UserDao {
   public async getUserByPlayerTag(player_tag: string) {
     const user = this.userRepository.findOne({
       where: { player_tag },
-      relations: {
-        battleLogs: true,
-      },
     });
 
     return user;

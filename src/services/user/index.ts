@@ -1,4 +1,3 @@
-import { logger } from "@helpers/logs";
 import { UserDao } from "@orm/dao/UserDao";
 import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
@@ -50,11 +49,9 @@ export class UserService {
 
   public async getOrCreateUser(
     telegram_id: number,
-    includeBattleLog: boolean = false
   ): Promise<User> {
     const user = await this.userDao.getOrCreateUser(
       telegram_id,
-      includeBattleLog
     );
     return user;
   }
@@ -77,7 +74,7 @@ export class UserService {
     limit: number = 5,
     period: "day" | "week" | "month" = "day"
   ): UserTopResponse {
-    const users = await this.userDao.getAllLinkedUsers(false);
+    const users = await this.userDao.getAllLinkedUsers();
     console.log(users[0]);
 
     const _usersWithStats = await Promise.all(

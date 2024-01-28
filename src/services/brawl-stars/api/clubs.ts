@@ -1,13 +1,25 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { BrawlStarsService } from "./service";
 import { BrawlStarsClub } from "@services/brawl-stars/api/types";
 import { ClubMemberListReponseType } from "@services/brawl-stars/api/types/club";
+import { logger } from "@helpers/logs";
 
 export type GetClanMembersOptions = {
   before?: string;
   after?: string;
   limit?: string;
 };
+
+const endpoints = {
+  getClanMembers: (clubTag: string) => {
+    const tag = encodeURIComponent(clubTag);
+    return `/clubs/${tag}/members`;
+  },
+  getClubInfo: (clubTag: string) => {
+    const tag = encodeURIComponent(clubTag);
+    return `/clubs/${tag}`;
+  },
+} as const;
 
 class Clubs {
   root: BrawlStarsService;
@@ -16,9 +28,13 @@ class Clubs {
     this.root = root;
   }
 
-  getClanInfo = async (clubTag: string): Promise<BrawlStarsClub> => {
+  private getDefaultError(what: string) {
+    return `Unexpected error while processing ${what}`;
+  }
+
+  public async getClanInfo(clubTag: string): Promise<BrawlStarsClub | null> {
     try {
-      const url = `${this.root.getUrl()}/clubs/${clubTag.replace("#", "%23")}`;
+      const url = this.root.getUrl() + endpoints.getClubInfo(clubTag);
 
       const config: AxiosRequestConfig = {
         headers: this.root.getHeaders(),
@@ -28,21 +44,19 @@ class Clubs {
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`);
+        logger.error(error.message);
+      } else {
+        logger.error(this.getDefaultError("club info"));
       }
-      if (error instanceof AxiosError) {
-        throw new Error(`Error: ${error.message}`);
-      }
-      throw new Error("Error: Unexpected error!");
+      return null;
     }
-  };
+  }
 
-  getClanMembers = async (
+  public async getClanMembers(
     clubTag: string,
     options?: GetClanMembersOptions
-  ): Promise<ClubMemberListReponseType> => {
-    const url =
-      this.root.getUrl() + `/clubs/${clubTag.replace("#", "%23")}/members`;
+  ): Promise<ClubMemberListReponseType | null> {
+    const url = this.root.getUrl() + endpoints.getClanMembers(clubTag);
     const params = new URLSearchParams(options);
     const requestOptions: AxiosRequestConfig = {
       headers: this.root.getHeaders(),
@@ -54,19 +68,17 @@ class Clubs {
         url,
         requestOptions
       );
-      if (!response.data)
-        throw new Error("Cannot get club members with tag: " + clubTag);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`);
+        logger.error(error.message);
       }
-      if (error instanceof AxiosError) {
-        throw new Error(`Error: ${error.message}`);
-      }
-      throw new Error("Error: Unexpected error!");
+
+      logger.error(this.getDefaultError("club members"))
+
+      return null;
     }
-  };
+  }
 }
 
 export { Clubs };

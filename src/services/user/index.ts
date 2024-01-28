@@ -1,3 +1,4 @@
+import { logger } from "@helpers/logs";
 import { UserDao } from "@orm/dao/UserDao";
 import { User } from "@orm/models/User";
 import { brawlStarsService } from "@services/brawl-stars/api";
@@ -38,6 +39,8 @@ export class UserService {
     if (!club) return null;
 
     const members = await brawlStarsService.clubs.getClanMembers(club.tag);
+
+    if (!members) return null;
 
     return members.items;
   }

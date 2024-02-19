@@ -165,6 +165,14 @@ export class UserService {
       await user.trophies.save();
     }
   }
+
+  public async getTopUsersByMysteryTrophies(limit = 5): Promise<User[]> {
+      const users = await this.userDao.getAllLinkedUsers();
+
+      const result = users.sort((a, b) => b.mystery_points - a.mystery_points);
+
+      return result.slice(0, limit);
+  }
 }
 
 export const userService = new UserService();

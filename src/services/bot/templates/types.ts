@@ -61,6 +61,18 @@ export type ClubListPayload = {
   }>;
 };
 
+export type TopMysteryPayload = {
+  players: Array<{
+    index: number
+    mystery_points: number
+    name: string
+  }>
+}
+
+export interface TopMysteryTemplate extends TemplateType<TopMysteryPayload> {
+  type: "TOP_MYSTERY";
+}
+
 export interface ClubListTemplate extends TemplateType<ClubListPayload> {
   type: "CLUB_LIST";
 }
@@ -68,5 +80,6 @@ export interface ClubListTemplate extends TemplateType<ClubListPayload> {
 export type TemplateInterface =
   | ProfileTemplate
   | TopDailyTemplate
-  | ClubListTemplate;
+  | ClubListTemplate
+  | TopMysteryTemplate
 export type TemplateKind = TemplateInterface["type"];

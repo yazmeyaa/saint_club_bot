@@ -1,0 +1,3 @@
+🔥 Топ игроков по 🔮:
+
+{{#players}}{{index}}. {{name}}: 🔮{{mystery_points}}{{/players}}

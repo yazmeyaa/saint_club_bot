@@ -7,6 +7,7 @@ import { unlinkCommand } from "./unlink";
 import { clubListCommand } from "./club_list";
 import { topDailyCommand } from "./top_daily";
 import { eventsCommand } from "./events";
+import { getTopMysteryPlayers } from "./get_top_mystery_points";
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 export type CommandType = MiddlewareFn<Context<Update>>;
@@ -18,5 +19,6 @@ brawlStarsComposer.use(
   unlinkCommand,
   clubListCommand,
   topDailyCommand,
-  eventsCommand
+  eventsCommand,
+  getTopMysteryPlayers
 );

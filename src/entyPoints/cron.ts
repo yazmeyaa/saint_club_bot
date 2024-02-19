@@ -5,9 +5,8 @@ export async function initCron() {
   cron.schedule("0 0 * * *", async () => {
     await userService.updateMysteryPointsToUsers();
     await userService.updateAllUsersTrophies("day");
+    const today = new Date();
+    if(today.getDay() === 0) await userService.updateAllUsersTrophies('week');
+    if(today.getDate() === 1) await userService.updateAllUsersTrophies('week')
   });
-  cron.schedule("0 0 * * MON", () =>
-    userService.updateAllUsersTrophies("week")
-  );
-  cron.schedule("0 0 1 * *", () => userService.updateAllUsersTrophies("month"));
 }

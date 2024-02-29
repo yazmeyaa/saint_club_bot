@@ -6,7 +6,7 @@ export async function initCron() {
     await userService.updateMysteryPointsToUsers();
     await userService.updateAllUsersTrophies("day");
     const today = new Date();
-    if(today.getDay() === 0) await userService.updateAllUsersTrophies('week');
-    if(today.getDate() === 1) await userService.updateAllUsersTrophies('week')
+    if(today.getDay() === 1) await userService.updateAllUsersTrophies('week');
+    if(today.getDate() === 1) await userService.updateAllUsersTrophies('month')
   });
 }

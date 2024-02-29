@@ -22,6 +22,7 @@ export class BrawlStarsService {
     if (!apiKey) throw new Error("NO BRAWL_API_KEY PROVIDED ");
     this.baseHeaders = new AxiosHeaders({
       Authorization: `Bearer ${apiKey}`,
+      "Cache-Control": "max-age=1800"
     });
     this.players = new Players(this);
     this.clubs = new Clubs(this);

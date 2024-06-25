@@ -6,6 +6,7 @@ import { Player } from "@services/brawl-stars/api/types";
 import { brawlStarsService } from "@services/brawl-stars/api";
 import { textTemplates } from "./templates";
 import { Message, Update } from "telegraf/typings/core/types/typegram";
+import { escapeMarkdown } from "@helpers/markdown";
 
 export async function checkIsAdmin(telegram_id: number): Promise<boolean> {
   const user = await User.findOne({ where: { telegram_id: telegram_id } });
@@ -76,7 +77,7 @@ export async function getProfileData(
 
   const icon = await brawlStarsService.icons.getProfileIconUrl(playerData);
 
-  return { playerData, logs, textMsg, icon };
+  return { playerData, logs, textMsg: escapeMarkdown(textMsg), icon };
 }
 
 export function createMention(name: string, user_id: number) {

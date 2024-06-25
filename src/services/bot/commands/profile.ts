@@ -8,6 +8,7 @@ import {
 } from "./consts";
 import { getProfileData } from "../helpers";
 import { CommandType } from ".";
+import { logger } from "@helpers/logs";
 
 export const profileCommand: CommandType = Composer.command(
   /^profile/,
@@ -45,7 +46,7 @@ export const profileCommand: CommandType = Composer.command(
         });
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
     }
   }

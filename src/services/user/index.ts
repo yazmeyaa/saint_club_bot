@@ -75,7 +75,6 @@ export class UserService {
     period: "day" | "week" | "month" = "day"
   ): UserTopResponse {
     const users = await this.userDao.getAllLinkedUsers();
-    console.log(users[0]);
 
     const _usersWithStats = await Promise.all(
       users.map((item) => this.getUserTrophyChangeByPeriod(item, period))

@@ -27,6 +27,6 @@ export const getTopMysteryPlayers: CommandType = Composer.command(/^get_top_myst
             players: templatePayload
         }
     })
-
+    ctx.react("👍");
     return await ctx.reply(msg)
 })

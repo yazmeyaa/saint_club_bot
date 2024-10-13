@@ -16,7 +16,10 @@ export const linkCommand: CommandType = Composer.command(
     const [playerTag] = ctx.args;
 
     const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
-    if (!isAdminRequest) return;
+    if (!isAdminRequest) {
+      ctx.react("👎");
+      return;
+    }
 
     if (!isValidPlayerTag(playerTag)) {
       return ctx.reply(INVALID_TAG_MESSAGE);

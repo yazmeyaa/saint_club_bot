@@ -36,11 +36,13 @@ export const profileCommand: CommandType = Composer.command(
       const { icon, textMsg } = profileData;
 
       if (icon) {
+        ctx.react("👍");
         return ctx.replyWithPhoto(icon, {
           caption: textMsg,
           parse_mode: "Markdown",
         });
       } else {
+        ctx.react("👍");
         ctx.reply(textMsg, {
           parse_mode: "Markdown",
         });

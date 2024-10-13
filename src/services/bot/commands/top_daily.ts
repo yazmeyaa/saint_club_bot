@@ -35,7 +35,7 @@ export const topDailyCommand: CommandType = Composer.command(
         players: data,
       },
     });
-
+    ctx.react("👍");
     return ctx.reply(msg);
   }
 );

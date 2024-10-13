@@ -39,3 +39,4 @@ export const topDailyCommand: CommandType = Composer.command(
     return ctx.reply(msg);
   }
 );
+  

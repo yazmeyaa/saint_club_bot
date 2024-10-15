@@ -47,7 +47,7 @@ export const topWeeklyCommand: CommandType = Composer.command(
         players: data,
       },
     });
-    ctx.react("👍");
+    await ctx.react("👍");
     return ctx.reply(msg);
   }
 );

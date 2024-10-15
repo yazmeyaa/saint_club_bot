@@ -9,7 +9,7 @@ export const unlinkCommand: CommandType = Composer.command(
   async (ctx) => {
     const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
     if (!isAdminRequest) {
-      ctx.react("👎");
+      await ctx.react("👎");
       return;
     }
 
@@ -17,7 +17,7 @@ export const unlinkCommand: CommandType = Composer.command(
     if (!target_id) return ctx.reply(NO_REPLY_TARGET_MESSAGE);
     await userService.removePlayerTag(target_id);
 
-    ctx.react("👍");
+    await ctx.react("👍");
     ctx.reply("ok");
   }
 );

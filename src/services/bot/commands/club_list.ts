@@ -32,7 +32,7 @@ export const clubListCommand: CommandType = Composer.command(
         members: clubMembersPayload,
       },
     });
-    ctx.react("👍");
+    await ctx.react("👍");
     return ctx.reply(msg, { parse_mode: "Markdown" });
   }
 );

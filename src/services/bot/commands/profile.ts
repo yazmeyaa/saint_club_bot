@@ -36,18 +36,19 @@ export const profileCommand: CommandType = Composer.command(
       const { icon, textMsg } = profileData;
 
       if (icon) {
-        ctx.react("👍");
+        await ctx.react("👍");
         return ctx.replyWithPhoto(icon, {
           caption: textMsg,
           parse_mode: "Markdown",
         });
       } else {
-        ctx.react("👍");
+        await ctx.react("👍");
         ctx.reply(textMsg, {
           parse_mode: "Markdown",
         });
       }
     } catch (err) {
+      await ctx.react("💩");
       logger.error(err);
       return ctx.reply(CANNOT_GET_PROFILE_DATA_MESSAGE);
     }

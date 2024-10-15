@@ -15,6 +15,7 @@ type UserTopResponse = Promise<Array<{
 type UserWithStats = {
   user: User;
   trophyChanges: number;
+  club: string | null;
 };
 
 export class UserService {
@@ -47,12 +48,8 @@ export class UserService {
     return members.items;
   }
 
-  public async getOrCreateUser(
-    telegram_id: number,
-  ): Promise<User> {
-    const user = await this.userDao.getOrCreateUser(
-      telegram_id,
-    );
+  public async getOrCreateUser(telegram_id: number): Promise<User> {
+    const user = await this.userDao.getOrCreateUser(telegram_id);
     return user;
   }
 
@@ -72,7 +69,8 @@ export class UserService {
 
   public async getTopUser(
     limit: number = 5,
-    period: "day" | "week" | "month" = "day"
+    period: "day" | "week" | "month" = "day",
+    club: string | null = null
   ): UserTopResponse {
     const users = await this.userDao.getAllLinkedUsers();
 
@@ -81,6 +79,14 @@ export class UserService {
     );
 
     const usersWithStats = _usersWithStats.filter(Boolean) as UserWithStats[];
+
+    if (club) {
+      return usersWithStats
+        .filter((x) => x.club === club)
+        .sort((a, b) => b.trophyChanges - a.trophyChanges)
+        .slice(0, limit);
+    }
+
     return usersWithStats
       .sort((a, b) => b.trophyChanges - a.trophyChanges)
       .slice(0, limit);
@@ -89,7 +95,7 @@ export class UserService {
   public async getUserTrophyChangeByPeriod(
     user: User,
     period: "day" | "week" | "month" = "day"
-  ) {
+  ): Promise<UserWithStats | null> {
     const lastTrophy = user.trophies[period];
     const playerData = await brawlStarsService.players.getPlayerInfo(
       user.player_tag!
@@ -98,7 +104,7 @@ export class UserService {
 
     const trophyChanges = playerData.trophies - lastTrophy;
 
-    return { user, trophyChanges };
+    return { user, trophyChanges, club: playerData.club?.tag ?? null };
   }
 
   public async removePlayerTag(telegram_id: number): Promise<void> {
@@ -166,11 +172,11 @@ export class UserService {
   }
 
   public async getTopUsersByMysteryTrophies(limit = 5): Promise<User[]> {
-      const users = await this.userDao.getAllLinkedUsers();
+    const users = await this.userDao.getAllLinkedUsers();
 
-      const result = users.sort((a, b) => b.mystery_points - a.mystery_points);
+    const result = users.sort((a, b) => b.mystery_points - a.mystery_points);
 
-      return result.slice(0, limit);
+    return result.slice(0, limit);
   }
 }
 

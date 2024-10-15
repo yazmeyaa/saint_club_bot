@@ -8,7 +8,19 @@ import { CommandType } from ".";
 export const topWeeklyCommand: CommandType = Composer.command(
   /^top_week/,
   async (ctx) => {
-    const users = await userService.getTopUser(10, "week");
+    let club: string | null = null;
+
+    if (!ctx.args.includes("all")) {
+      const user = await userService.getOrCreateUser(ctx.message.from.id);
+      if (user.player_tag === null) return;
+      const player = await brawlStarsService.players.getPlayerInfo(
+        user.player_tag
+      );
+      if (!player || !player.club) return;
+      club = player.club.tag;
+    }
+
+    const users = await userService.getTopUser(10, "week", club);
 
     if (!users) return ctx.reply("Не удалось получить список пользователей");
 

@@ -8,7 +8,19 @@ import { CommandType } from ".";
 export const topDailyCommand: CommandType = Composer.command(
   /^top_daily/,
   async (ctx) => {
-    const users = await userService.getTopUser(5, "day");
+    let club: string | null = null;
+
+    if (!ctx.args.includes("all")) {
+      const user = await userService.getOrCreateUser(ctx.message.from.id);
+      if (user.player_tag === null) return;
+      const player = await brawlStarsService.players.getPlayerInfo(
+        user.player_tag
+      );
+      if (!player || !player.club) return;
+      club = player.club.tag;
+    }
+
+    const users = await userService.getTopUser(5, "day", club);
 
     if (!users) return ctx.reply("Не удалось получить список пользователей");
 
@@ -35,8 +47,7 @@ export const topDailyCommand: CommandType = Composer.command(
         players: data,
       },
     });
-    ctx.react("👍");
+    await ctx.react("👍");
     return ctx.reply(msg);
   }
 );
-  

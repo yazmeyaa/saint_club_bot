@@ -17,7 +17,7 @@ export const linkCommand: CommandType = Composer.command(
 
     const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
     if (!isAdminRequest) {
-      await ctx.react("👎");
+      await ctx.react("🖕");
       return;
     }
 

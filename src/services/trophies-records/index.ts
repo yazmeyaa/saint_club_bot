@@ -56,7 +56,7 @@ export class TrophiesRecordsService {
         day: "numeric",
       })
     ).reverse();
-    const trophiesData = records.map((record) => record.trophies);
+    const trophiesData = records.map((record) => record.trophies).reverse();
 
     const cfg: ChartConfiguration = {
       type: "line",

@@ -55,7 +55,7 @@ export class TrophiesRecordsService {
         month: "short",
         day: "numeric",
       })
-    );
+    ).reverse();
     const trophiesData = records.map((record) => record.trophies);
 
     const cfg: ChartConfiguration = {

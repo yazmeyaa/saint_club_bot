@@ -1,10 +1,11 @@
 import "../paths";
-import { User } from "@orm/models/User";
+import { User } from "./models/User";
+import { UserTrophies } from "./models/UserTrophy";
+import { TrophiesRecord } from "./models/TrophyRecord";
 import { existsSync, mkdirSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import { DataSource } from "typeorm";
-import { UserTrophies } from "./models/UserTrophy";
 
 import { Initdatabase1705350896162 } from "./migrations/1705350896162-initdatabase";
 import { Createbattlelog1705664224603 } from "./migrations/1705664224603-createbattlelog";
@@ -12,8 +13,11 @@ import { Updateschemabattlelog1705687798028 } from "./migrations/1705687798028-u
 import { UpdateBattleLogSchema1705696256821 } from "./migrations/1705696256821-update_battle_log_schema";
 import { CreateUserTrophies1705921307447 } from "./migrations/1705921307447-createUserTrophies";
 import { AddMysteryPointsToUser1706009323551 } from "./migrations/1706009323551-addMysteryPointsToUser";
-import { TrophyRecords } from "./models/TrophyRecord";
 import { AddTrophyRecordsTable1729601561533 } from "./migrations/1729601561533-add_trophy_records_table";
+import { AddRelationUserTrophiesToUser1729602577792 } from "./migrations/1729602577792-add_relation_userTrophies_to_user";
+import { ChangeTrophiesRecordsModel1729603408928 } from "./migrations/1729603408928-change_trophies_records_model";
+import { ChangeUserTrophyToUserRelationType1729603737050 } from "./migrations/1729603737050-change_userTrophy_to_user_relation_type";
+import { AlterUserTrophiesUserColumn1729605321993 } from "./migrations/1729605321993-alter_userTrophies_user_column";
 
 const { NODE_ENV } = process.env;
 
@@ -38,8 +42,12 @@ export const AppDataSource = new DataSource({
     CreateUserTrophies1705921307447,
     AddMysteryPointsToUser1706009323551,
     AddTrophyRecordsTable1729601561533,
+    AddRelationUserTrophiesToUser1729602577792,
+    ChangeTrophiesRecordsModel1729603408928,
+    ChangeUserTrophyToUserRelationType1729603737050,
+    AlterUserTrophiesUserColumn1729605321993,
   ],
-  entities: [User, UserTrophies, TrophyRecords],
+  entities: [User, UserTrophies, TrophiesRecord],
 });
 
 AppDataSource.initialize()

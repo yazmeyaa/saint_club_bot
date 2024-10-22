@@ -10,4 +10,4 @@ async function startServer() {
   await initBot();
 }
 
-startServer()
+startServer();

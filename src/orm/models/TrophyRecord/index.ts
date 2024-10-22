@@ -1,7 +1,7 @@
-import { Column, Entity, IsNull, Not, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class TrophyRecords {
+export class TrophiesRecord extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -17,11 +17,5 @@ export class TrophyRecords {
   public playerTag: string;
 
   @Column("integer", { nullable: false })
-  day: number;
-
-  @Column("integer", { nullable: false })
-  week: number;
-
-  @Column("integer", { nullable: false })
-  month: number;
+  public trophies: number;
 }

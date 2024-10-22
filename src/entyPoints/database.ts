@@ -33,7 +33,6 @@ export async function initDatabase() {
 
   const admin = await userService.getOrCreateUser(279603779);
   admin.admin = true;
-  console.log({ admin });
 
   await admin.save();
 }

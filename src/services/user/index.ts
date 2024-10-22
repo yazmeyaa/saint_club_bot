@@ -37,6 +37,10 @@ export class UserService {
     return clubInfo;
   }
 
+  public async getAllLinkedUsers(): Promise<User[]> {
+    return this.userDao.getAllLinkedUsers();
+  }
+
   public async getUserClubMembers(telegram_id: number): GetClubMembersResponse {
     const club = await this.getUserClubInfo(telegram_id);
     if (!club) return null;

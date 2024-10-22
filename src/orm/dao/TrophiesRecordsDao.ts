@@ -34,7 +34,7 @@ export class TrophiesRecordsDao {
       where: { playerTag },
       take: limit,
       skip: offset,
-      order: { date: { direction: "DESC" } },
+      order: { date: { direction: "ASC" } },
     });
   }
 }

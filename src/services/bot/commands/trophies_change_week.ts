@@ -26,11 +26,14 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
     }
 
     const records: TrophyChangeWeekPayload["records"] = rawRecords.map(
-      (rec, idx) => {
+      (rec, idx, arr) => {
+        const prev = arr[idx - 1];
+        const diff = prev ? rec.trophies - prev.trophies : 0;
         return {
           index: idx + 1,
           date: rec.date.toLocaleDateString("ru"),
           trophies: rec.trophies,
+          diff: diff > 0 ? `+${diff}` : diff.toString(),
         };
       }
     );

@@ -78,6 +78,7 @@ export type TrophyChangeWeekPayload = {
   records: Array<{
     index: number;
     trophies: number;
+    diff: string;
   }>;
 };
 

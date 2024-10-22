@@ -3,13 +3,24 @@ import { CommandType } from ".";
 import { userService } from "@services/user";
 import { NOT_FOUND_USER_MESSAGE, NOT_LINKED_USER_MESSAGE } from "./consts";
 import { textTemplates } from "../templates";
-import { TrophiesRecordsService } from "@services/trophies-records";
+import {
+  ChartSizeType,
+  TrophiesRecordsService,
+} from "@services/trophies-records";
 import { TrophyChangeWeekPayload } from "../templates/types";
 
 export const trophiesChangeWeekCommand: CommandType = Composer.command(
   /^trophies_change_week/,
   async (ctx) => {
     const telegram_id = ctx.update.message.from.id;
+    const [size = "desktop"] = ctx.args;
+
+    if (!["desktop", "mobile"].includes(size)) {
+      await ctx.react("💩");
+      await ctx.reply(
+        'Неверный формат изображения. Ожидается "desktop" или "mobile".'
+      );
+    }
 
     const user = await userService.getOrCreateUser(telegram_id);
 
@@ -43,7 +54,16 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
       payload: { records },
     });
 
+    const chartBuff = trophiesRecords.generateChart(
+      rawRecords,
+      size as ChartSizeType
+    );
     await ctx.react("👍");
-    await ctx.reply(textTemplate);
+    await ctx.replyWithPhoto(
+      { source: chartBuff },
+      {
+        caption: textTemplate,
+      }
+    );
   }
 );

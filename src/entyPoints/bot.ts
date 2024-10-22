@@ -12,6 +12,7 @@ export async function initBot() {
         (error as Error).message
       }`
     );
-    logger.error(error);
+    console.log(error);
+    logger.error((error as Error).message);
   });
 }

@@ -20,7 +20,6 @@ export class TrophiesRecordsService {
     playerTag: string,
     trophies: UserTrophies
   ): Promise<TrophiesRecord> {
-    console.log({ trophies });
     return this.dao.createRecord(playerTag, trophies);
   }
 

@@ -9,6 +9,7 @@ import { topDailyCommand } from "./top_daily";
 import { eventsCommand } from "./events";
 import { getTopMysteryPlayers } from "./get_top_mystery_points";
 import { topWeeklyCommand } from "./top_weekly";
+import { trophiesChangeWeekCommand } from "./trophies_change_week";
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 export type CommandType = MiddlewareFn<Context<Update>>;
@@ -22,5 +23,6 @@ brawlStarsComposer.use(
   topDailyCommand,
   eventsCommand,
   getTopMysteryPlayers,
-  topWeeklyCommand
+  topWeeklyCommand,
+  trophiesChangeWeekCommand
 );

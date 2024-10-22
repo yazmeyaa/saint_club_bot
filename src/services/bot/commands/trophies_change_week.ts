@@ -18,6 +18,13 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
     const trophiesRecords = TrophiesRecordsService.getInstance();
 
     const rawRecords = await trophiesRecords.getRecords(user.player_tag, 7);
+
+    if (rawRecords.length === 0) {
+      await ctx.react("🤷‍♂");
+      await ctx.reply("Записей не найдено. Попробуй завтра.");
+      return;
+    }
+
     const records: TrophyChangeWeekPayload["records"] = rawRecords.map(
       (rec, idx) => {
         return {

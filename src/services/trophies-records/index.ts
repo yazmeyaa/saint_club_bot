@@ -47,16 +47,15 @@ export class TrophiesRecordsService {
       height,
       backgroundColour,
     });
-
-    records.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
     const labels = records.map((record) =>
       record.date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
       })
-    ).reverse();
-    const trophiesData = records.map((record) => record.trophies).reverse();
+    );
+    const trophiesData = records.map((record) => record.trophies);
 
     const cfg: ChartConfiguration = {
       type: "line",

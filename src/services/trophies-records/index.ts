@@ -61,7 +61,7 @@ export class TrophiesRecordsService {
     const cfg: ChartConfiguration = {
       type: "line",
       data: {
-        labels: labels,
+        labels: labels.reverse(),
         datasets: [
           {
             label: "Trophies Over Time",

@@ -8,7 +8,4 @@ export class UserTrophiesDao {
   constructor() {
     this.userTrophiesRepository = AppDataSource.getRepository(UserTrophies);
   }
-
-  
-  
 }

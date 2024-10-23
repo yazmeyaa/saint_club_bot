@@ -4,6 +4,7 @@ import { brawlStarsService } from "@services/brawl-stars/api";
 import {
   BrawlStarsClub,
   ClubMemberList,
+  PlayerRankingClub,
 } from "@services/brawl-stars/api/types";
 
 type GetClubMembersResponse = Promise<ClubMemberList | null>;
@@ -173,7 +174,9 @@ export class UserService {
       );
 
       if (!profileData) continue;
-
+      if (profileData.club.tag.toLowerCase() !== "#2RJ8P80JU".toLowerCase()) {
+        continue;
+      }
       user.trophies[period] = profileData.trophies;
 
       await user.trophies.save();
@@ -183,7 +186,29 @@ export class UserService {
   public async getTopUsersByMysteryTrophies(limit = 5): Promise<User[]> {
     const users = await this.userDao.getAllLinkedUsers();
 
-    const result = users.sort((a, b) => b.mystery_points - a.mystery_points);
+    const filteredPromise: Promise<User | null>[] = [];
+
+    for (const user of users) {
+      filteredPromise.push(
+        new Promise(async (resolve) => {
+          const profileData = await brawlStarsService.players.getPlayerInfo(
+            user.player_tag!
+          );
+          if (!profileData || !profileData.club || !profileData.club.tag)
+            resolve(null);
+          if (
+            profileData?.club.tag?.toLowerCase() !== "#2RJ8P80JU".toLowerCase()
+          )
+            resolve(null);
+          resolve(user);
+        })
+      );
+    }
+
+    const _filtered = await Promise.all(filteredPromise);
+    const filtered = _filtered.filter(Boolean) as User[];
+
+    const result = filtered.sort((a, b) => b.mystery_points - a.mystery_points);
 
     return result.slice(0, limit);
   }

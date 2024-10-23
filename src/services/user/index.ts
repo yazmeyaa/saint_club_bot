@@ -115,6 +115,11 @@ export class UserService {
     await this.userDao.removePlayerTag(telegram_id);
   }
 
+  public async addMysteryPoint(user: User): Promise<void> {
+    user.mystery_points++;
+    await user.save();
+  }
+
   public async updateMysteryPointsToUsers(): Promise<void> {
     const dao = new UserDao();
 

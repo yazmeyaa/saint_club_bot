@@ -94,6 +94,15 @@ export class TrophiesRecordsService {
         ],
       },
       options: {
+        plugins: {
+          legend: {
+            labels: {
+              filter(item) {
+                return item.text !== "Trophies Mirror";
+              },
+            },
+          },
+        },
         scales: {
           "left-y-axis": {
             position: "left",
@@ -103,6 +112,7 @@ export class TrophiesRecordsService {
             },
           },
           "right-y-axis": {
+            display: false,
             position: "right",
             title: {
               display: true,

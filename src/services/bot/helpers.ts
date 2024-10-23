@@ -7,6 +7,7 @@ import { brawlStarsService } from "@services/brawl-stars/api";
 import { textTemplates } from "./templates";
 import { Message, Update } from "telegraf/typings/core/types/typegram";
 import { escapeMarkdown } from "@helpers/markdown";
+import { UserTitleService } from "@services/user-title";
 
 export async function checkIsAdmin(telegram_id: number): Promise<boolean> {
   const user = await User.findOne({ where: { telegram_id: telegram_id } });
@@ -66,12 +67,15 @@ export async function getProfileData(
     trophyChangeMonth: playerData.trophies - user.trophies.month,
   };
 
+  const title = await UserTitleService.getInstance().getUserTitle(user);
+
   const textMsg = await textTemplates.getTemplate({
     type: "PROFILE",
     payload: {
       ...playerData,
       ...logs,
       mystery_points: user.mystery_points,
+      title: title?.title ? `Титул: 「${title.title}」` : "",
     },
   });
 

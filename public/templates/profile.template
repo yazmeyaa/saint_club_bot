@@ -1,4 +1,5 @@
 {{name}} ({{tag}})
+{{title}}
 🎖Уровень: {{expLevel}} ({{expPoints}} очков опыта)
 👾Клуб: {{club.name}} ({{club.tag}})
 🔮 {{mystery_points}}

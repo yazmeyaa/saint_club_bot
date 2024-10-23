@@ -32,6 +32,7 @@ export type ProfilePayload = {
   "3vs3Victories": number;
   soloVictories: number;
   duoVictories: number;
+  title: string;
 };
 
 export interface ProfileTemplate extends TemplateType<ProfilePayload> {

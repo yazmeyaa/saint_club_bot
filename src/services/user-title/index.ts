@@ -1,4 +1,5 @@
 import { UserTitleDao } from "@orm/dao/UserTitleDao";
+import { User } from "@orm/models/User";
 import { UserTitle } from "@orm/models/UserTitle";
 
 export class UserTitleService {
@@ -16,5 +17,9 @@ export class UserTitleService {
     title: UserTitle["title"]
   ): Promise<UserTitle> {
     return this.dao.createTitle(needPoints, title);
+  }
+
+  public async getUserTitle(user: User): Promise<UserTitle | null> {
+    return this.dao.getUserTitle(user);
   }
 }

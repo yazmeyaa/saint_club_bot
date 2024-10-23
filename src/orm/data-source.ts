@@ -18,6 +18,8 @@ import { AddRelationUserTrophiesToUser1729602577792 } from "./migrations/1729602
 import { ChangeTrophiesRecordsModel1729603408928 } from "./migrations/1729603408928-change_trophies_records_model";
 import { ChangeUserTrophyToUserRelationType1729603737050 } from "./migrations/1729603737050-change_userTrophy_to_user_relation_type";
 import { AlterUserTrophiesUserColumn1729605321993 } from "./migrations/1729605321993-alter_userTrophies_user_column";
+import { UserTitle } from "./models/UserTitle";
+import { AddUserTitles1729687316214 } from "./migrations/1729687316214-add_user_titles";
 
 const { NODE_ENV } = process.env;
 
@@ -46,8 +48,9 @@ export const AppDataSource = new DataSource({
     ChangeTrophiesRecordsModel1729603408928,
     ChangeUserTrophyToUserRelationType1729603737050,
     AlterUserTrophiesUserColumn1729605321993,
+    AddUserTitles1729687316214,
   ],
-  entities: [User, UserTrophies, TrophiesRecord],
+  entities: [User, UserTrophies, TrophiesRecord, UserTitle],
 });
 
 AppDataSource.initialize()

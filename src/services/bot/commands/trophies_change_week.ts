@@ -29,7 +29,6 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
     const trophiesRecords = TrophiesRecordsService.getInstance();
 
     const rawRecords = await trophiesRecords.getRecords(user.player_tag, 7);
-
     if (rawRecords.length === 0) {
       await ctx.react("🤷‍♂");
       await ctx.reply("Записей не найдено. Попробуй завтра.");
@@ -59,11 +58,6 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
       size as ChartSizeType
     );
     await ctx.react("👍");
-    await ctx.replyWithPhoto(
-      { source: chartBuff },
-      {
-        caption: textTemplate,
-      }
-    );
+    await ctx.replyWithPhoto({ source: chartBuff }, { caption: textTemplate });
   }
 );

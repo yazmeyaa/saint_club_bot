@@ -30,11 +30,13 @@ export class TrophiesRecordsDao {
     limit = 20,
     offset = 0
   ): Promise<TrophiesRecord[]> {
-    return this.trophiesRecordsRepository.find({
+    const result = await this.trophiesRecordsRepository.find({
       where: { playerTag },
       take: limit,
       skip: offset,
-      order: { date: { direction: "ASC" } },
+      order: { date: { direction: "DESC" } },
     });
+
+    return result.toReversed();
   }
 }

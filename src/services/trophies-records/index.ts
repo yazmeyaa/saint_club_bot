@@ -4,8 +4,9 @@ import { UserTrophies } from "@orm/models/UserTrophy";
 import { userService } from "@services/user";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { type ChartConfiguration } from "chart.js";
+import { reverse } from "dns";
 
-export type ChartSizeType = "desktop" | "mobile"
+export type ChartSizeType = "desktop" | "mobile";
 
 export class TrophiesRecordsService {
   private static instance: TrophiesRecordsService;
@@ -47,7 +48,7 @@ export class TrophiesRecordsService {
       height,
       backgroundColour,
     });
-    
+
     const labels = records.map((record) =>
       record.date.toLocaleDateString("en-US", {
         year: "numeric",
@@ -80,6 +81,8 @@ export class TrophiesRecordsService {
             },
           },
           y: {
+            suggestedMax: Math.max(...trophiesData) + 100,
+            suggestedMin: Math.min(...trophiesData) - 50,
             title: {
               display: true,
               text: "Trophies",

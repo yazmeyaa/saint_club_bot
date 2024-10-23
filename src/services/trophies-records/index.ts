@@ -81,23 +81,41 @@ export class TrophiesRecordsService {
             borderColor: "rgba(75, 192, 192, 1)",
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             fill: true,
+            yAxisID: "left-y-axis",
+          },
+          {
+            label: "Trophies Mirror",
+            data: trophiesData,
+            borderColor: "rgba(192, 75, 192, 1)",
+            backgroundColor: "rgba(192, 75, 192, 0.2)",
+            fill: false,
+            yAxisID: "right-y-axis",
           },
         ],
       },
       options: {
         scales: {
+          "left-y-axis": {
+            position: "left",
+            title: {
+              display: true,
+              text: "Trophies",
+            },
+          },
+          "right-y-axis": {
+            position: "right",
+            title: {
+              display: true,
+              text: "Trophies",
+            },
+            grid: {
+              drawOnChartArea: false,
+            },
+          },
           x: {
             title: {
               display: true,
               text: "Date",
-            },
-          },
-          y: {
-            suggestedMax: Math.max(...trophiesData) + 100,
-            suggestedMin: Math.min(...trophiesData) - 50,
-            title: {
-              display: true,
-              text: "Trophies",
             },
           },
         },

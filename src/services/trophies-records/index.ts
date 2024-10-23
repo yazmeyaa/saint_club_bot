@@ -4,13 +4,34 @@ import { UserTrophies } from "@orm/models/UserTrophy";
 import { userService } from "@services/user";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { type ChartConfiguration } from "chart.js";
-import { reverse } from "dns";
 
 export type ChartSizeType = "desktop" | "mobile";
 
 export class TrophiesRecordsService {
   private static instance: TrophiesRecordsService;
   private dao: TrophiesRecordsDao;
+  private canvas: Record<ChartSizeType, ChartJSNodeCanvas>;
+
+  private initCanvas() {
+    this.canvas = {
+      desktop: new ChartJSNodeCanvas({
+        width: 1366,
+        height: 768,
+        backgroundColour: "white",
+      }),
+      mobile: new ChartJSNodeCanvas({
+        width: 360,
+        height: 800,
+        backgroundColour: "white",
+      }),
+    };
+  }
+
+  private getCanvas(type: ChartSizeType) {
+    if (!this.canvas) this.initCanvas();
+    return this.canvas[type];
+  }
+
   constructor() {
     this.dao = new TrophiesRecordsDao();
   }
@@ -40,19 +61,10 @@ export class TrophiesRecordsService {
     records: TrophiesRecord[],
     size: ChartSizeType = "desktop"
   ): Buffer {
-    const width = size === "desktop" ? 1366 : 360;
-    const height = size == "desktop" ? 768 : 800;
-    const backgroundColour = "white";
-    const chartJSNodeCanvas = new ChartJSNodeCanvas({
-      width,
-      height,
-      backgroundColour,
-    });
-
     const labels = records.map((record) =>
-      record.date.toLocaleDateString("en-US", {
+      record.date.toLocaleDateString("ru", {
         year: "numeric",
-        month: "short",
+        month: "2-digit",
         day: "numeric",
       })
     );
@@ -92,7 +104,7 @@ export class TrophiesRecordsService {
       },
     };
 
-    return chartJSNodeCanvas.renderToBufferSync(cfg);
+    return this.getCanvas(size).renderToBufferSync(cfg);
   }
 
   public async createRecordsForEveryLinkedUser() {

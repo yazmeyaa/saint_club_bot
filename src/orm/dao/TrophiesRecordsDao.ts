@@ -37,6 +37,6 @@ export class TrophiesRecordsDao {
       order: { date: { direction: "DESC" } },
     });
 
-    return result.toReversed();
+    return result.reverse();
   }
 }

@@ -75,7 +75,7 @@ export type TopMysteryPayload = {
   }>;
 };
 
-export type TrophyChangeWeekPayload = {
+export type TrophyChangePayload = {
   records: Array<{
     index: number;
     trophies: number;
@@ -91,9 +91,9 @@ export interface ClubListTemplate extends TemplateType<ClubListPayload> {
   type: "CLUB_LIST";
 }
 
-export interface TrophyChangeWeek
-  extends TemplateType<TrophyChangeWeekPayload> {
-  type: "TROPHY_CHANGE_WEEK";
+export interface TrophyChange
+  extends TemplateType<TrophyChangePayload> {
+  type: "TROPHY_CHANGE_WEEK" | "TROPHY_CHANGE_MONTH" | "TROPHY_CHANGE_YEAR";
 }
 
 export type TemplateInterface =
@@ -102,5 +102,5 @@ export type TemplateInterface =
   | ClubListTemplate
   | TopMysteryTemplate
   | TopWeklyTemplate
-  | TrophyChangeWeek;
+  | TrophyChange;
 export type TemplateKind = TemplateInterface["type"];

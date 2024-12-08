@@ -9,8 +9,8 @@ import {
 } from "@services/trophies-records";
 import { TrophyChangePayload } from "../templates/types";
 
-export const trophiesChangeWeekCommand: CommandType = Composer.command(
-  /^trophies_change_week/,
+export const trophiesChangeMonthCommand: CommandType = Composer.command(
+  /^trophies_change_month/,
   async (ctx) => {
     const telegram_id = ctx.update.message.from.id;
     const [size = "desktop"] = ctx.args;
@@ -28,7 +28,7 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
     if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
     const trophiesRecords = TrophiesRecordsService.getInstance();
 
-    const rawRecords = await trophiesRecords.getRecords(user.player_tag, 7);
+    const rawRecords = await trophiesRecords.getRecords(user.player_tag, 30);
     if (rawRecords.length === 0) {
       await ctx.react("🤷‍♂");
       await ctx.reply("Записей не найдено. Попробуй завтра.");
@@ -49,7 +49,7 @@ export const trophiesChangeWeekCommand: CommandType = Composer.command(
     );
 
     const textTemplate = await textTemplates.getTemplate({
-      type: "TROPHY_CHANGE_WEEK",
+      type: "TROPHY_CHANGE_MONTH",
       payload: { records },
     });
 

@@ -7,7 +7,7 @@ class BotMessageTextTemplates {
   private getTemplatePath(template: TemplateKind): string {
     const base = 'public/templates'
     const path = resolve(join(base, TEMPALTE_PATHES[template]));
-    
+
     return path;
   }
 

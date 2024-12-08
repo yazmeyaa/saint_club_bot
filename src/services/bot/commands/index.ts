@@ -12,6 +12,8 @@ import { topWeeklyCommand } from "./top_weekly";
 import { trophiesChangeWeekCommand } from "./trophies_change_week";
 import { addBallCommand } from "./add_mystery";
 import { addTitleCommand } from "./add_title";
+import { trophiesChangeMonthCommand } from "./trophies_change_month";
+import { trophiesChangeYearCommand } from "./trophies_change_year";
 
 export const brawlStarsComposer: Composer<Context<Update>> = new Composer();
 export type CommandType = MiddlewareFn<Context<Update>>;
@@ -28,5 +30,7 @@ brawlStarsComposer.use(
   topWeeklyCommand,
   trophiesChangeWeekCommand,
   addBallCommand,
-  addTitleCommand
+  addTitleCommand,
+  trophiesChangeMonthCommand,
+  trophiesChangeYearCommand,
 );

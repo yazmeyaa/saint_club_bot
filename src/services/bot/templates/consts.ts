@@ -7,4 +7,6 @@ export const TEMPALTE_PATHES: Record<TemplateKind, string> = {
   TOP_MYSTERY: "top_mystery.template",
   TOP_WEEKLY: "top_weekly.template",
   TROPHY_CHANGE_WEEK: "trophy_change_week.template",
+  TROPHY_CHANGE_MONTH: "trophy_change_month.template",
+  TROPHY_CHANGE_YEAR: "trophy_change_year.template"
 } as const;

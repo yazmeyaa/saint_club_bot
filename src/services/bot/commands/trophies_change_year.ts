@@ -28,7 +28,7 @@ export const trophiesChangeYearCommand: CommandType = Composer.command(
     if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);
     const trophiesRecords = TrophiesRecordsService.getInstance();
 
-    const rawRecords = await trophiesRecords.getRecords(user.player_tag, 30);
+    const rawRecords = await trophiesRecords.getRecords(user.player_tag, 365);
     if (rawRecords.length === 0) {
       await ctx.react("🤷‍♂");
       await ctx.reply("Записей не найдено. Попробуй завтра.");

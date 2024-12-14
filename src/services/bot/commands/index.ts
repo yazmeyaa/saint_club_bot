@@ -6,7 +6,6 @@ import { linkCommand } from "./link";
 import { unlinkCommand } from "./unlink";
 import { clubListCommand } from "./club_list";
 import { topDailyCommand } from "./top_daily";
-import { eventsCommand } from "./events";
 import { getTopMysteryPlayers } from "./get_top_mystery_points";
 import { topWeeklyCommand } from "./top_weekly";
 import { trophiesChangeWeekCommand } from "./trophies_change_week";
@@ -25,7 +24,6 @@ brawlStarsComposer.use(
   unlinkCommand,
   clubListCommand,
   topDailyCommand,
-  eventsCommand,
   getTopMysteryPlayers,
   topWeeklyCommand,
   trophiesChangeWeekCommand,

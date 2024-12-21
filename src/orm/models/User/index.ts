@@ -23,6 +23,6 @@ export class User extends BaseEntity {
   mystery_points: number;
 
   @OneToOne(() => UserTrophies, { eager: true })
-  @JoinColumn()
+  @JoinColumn({name: 'trophiesid'})
   trophies: UserTrophies;
 }

@@ -14,7 +14,7 @@ export class UserTrophies extends BaseEntity {
   id: number;
 
   @OneToOne(() => User, (u) => u.trophies)
-  @JoinColumn({ name: "userTelegramId" })
+  @JoinColumn({ name: "usertelegramid" })
   public user: User;
 
   @Column("integer", { default: 0 })

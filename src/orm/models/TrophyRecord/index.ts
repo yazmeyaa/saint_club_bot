@@ -5,7 +5,7 @@ export class TrophiesRecord extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column("datetime", {
+  @Column("timestamp", {
     nullable: false,
     default: () => "CURRENT_TIMESTAMP",
   })

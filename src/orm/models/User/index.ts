@@ -16,7 +16,7 @@ export class User extends BaseEntity {
   @Column("text", { nullable: true, default: null })
   player_tag: string | null = null;
 
-  @Column("boolean", { default: false })
+  @Column("bool", { default: false })
   admin: boolean;
 
   @Column("integer", { default: 0 })

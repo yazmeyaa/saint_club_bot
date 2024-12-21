@@ -13,6 +13,7 @@ export class TrophiesRecord extends BaseEntity {
 
   @Column("text", {
     nullable: false,
+    name: 'playertag'
   })
   public playerTag: string;
 

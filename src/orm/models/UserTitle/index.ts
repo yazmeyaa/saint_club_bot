@@ -5,7 +5,7 @@ export class UserTitle extends BaseEntity {
   @PrimaryGeneratedColumn("rowid")
   public readonly id: number;
 
-  @Column("integer", { nullable: false, unique: true })
+  @Column("integer", { nullable: false, unique: true, name: 'pointsneed' })
   public pointsNeed: number;
 
   @Column("text", { nullable: false })

@@ -6,7 +6,7 @@ import { DataSource } from "typeorm";
 
 import { UserTitle } from "./models/UserTitle";
 import { environments } from "@config/env";
-import { InitPsqlDatabase1734809320349 } from "./1734809320349-init_psql_database";
+import {InitPgDb1741349430499} from "@orm/migrations/1741349430499-init_pg_db";
 
 const { NODE_ENV } = process.env;
 
@@ -21,7 +21,7 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: NODE_ENV === "development",
   subscribers: [],
-  migrations: [InitPsqlDatabase1734809320349],
+  migrations: [InitPgDb1741349430499],
   entities: [User, UserTrophies, TrophiesRecord, UserTitle],
 });
 

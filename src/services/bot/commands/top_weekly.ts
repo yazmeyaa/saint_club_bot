@@ -11,7 +11,7 @@ export const topWeeklyCommand: CommandType = Composer.command(
     let club: string | null = null;
 
     if (!ctx.args.includes("all")) {
-      const user = await userService.getOrCreateUser(ctx.message.from.id);
+      const user = await userService.getOrCreateUser(ctx.message.from.id.toString());
       if (user.player_tag === null) return;
       const player = await brawlStarsService.players.getPlayerInfo(
         user.player_tag

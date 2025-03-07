@@ -8,7 +8,7 @@ import { UserTitle } from "@orm/models/UserTitle";
 export const addTitleCommand: CommandType = Composer.command(
   /^add_title/,
   async (ctx) => {
-    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
+    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id.toString());
     if (!isAdminRequest) {
       await ctx.react("🖕");
       return;

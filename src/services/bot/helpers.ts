@@ -9,7 +9,7 @@ import { Message, Update } from "telegraf/typings/core/types/typegram";
 import { escapeMarkdown } from "@helpers/markdown";
 import { UserTitleService } from "@services/user-title";
 
-export async function checkIsAdmin(telegram_id: number): Promise<boolean> {
+export async function checkIsAdmin(telegram_id: string): Promise<boolean> {
   const user = await User.findOne({ where: { telegram_id: telegram_id } });
 
   if (!user) return false;
@@ -84,7 +84,7 @@ export async function getProfileData(
   return { playerData, logs, textMsg: escapeMarkdown(textMsg), icon };
 }
 
-export function createMention(name: string, user_id: number) {
+export function createMention(name: string, user_id: string) {
   return `\[${name}\](tg://user?id=${user_id})`;
 }
 

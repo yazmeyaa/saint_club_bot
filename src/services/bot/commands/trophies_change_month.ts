@@ -12,7 +12,7 @@ import { TrophyChangePayload } from "../templates/types";
 export const trophiesChangeMonthCommand: CommandType = Composer.command(
   /^trophies_change_month/,
   async (ctx) => {
-    const telegram_id = ctx.update.message.from.id;
+    const telegram_id = ctx.update.message.from.id.toString();
     const [size = "desktop"] = ctx.args;
 
     if (!["desktop", "mobile"].includes(size)) {

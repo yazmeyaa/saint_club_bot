@@ -10,8 +10,8 @@ import { UserTrophies } from "../UserTrophy";
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn("integer", { unique: true, primary: true })
-  telegram_id: number;
+  @PrimaryColumn("bigint", { unique: true, primary: true })
+  telegram_id: string;
 
   @Column("text", { nullable: true, default: null })
   player_tag: string | null = null;

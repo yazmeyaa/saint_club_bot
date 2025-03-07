@@ -1,8 +1,7 @@
-import { Repository } from "typeorm";
-import { UserTitle } from "../models/UserTitle/index";
-import { AppDataSource } from "@orm/data-source";
-import { title } from "process";
-import { User } from "@orm/models/User";
+import {Repository} from "typeorm";
+import {UserTitle} from "@orm/models/UserTitle";
+import {AppDataSource} from "@orm/data-source";
+import {User} from "@orm/models/User";
 
 export class UserTitleDao {
   private repo: Repository<UserTitle> = AppDataSource.getRepository(UserTitle);
@@ -34,13 +33,11 @@ export class UserTitleDao {
   }
 
   public async getUserTitle(user: User): Promise<UserTitle | null> {
-    const title = await UserTitle.createQueryBuilder("userTitle")
-      .where("userTitle.pointsNeed <= :mysteryPoints", {
-        mysteryPoints: user.mystery_points,
-      })
-      .orderBy("userTitle.pointsNeed", "DESC")
-      .getOne();
-
-    return title;
+    return await UserTitle.createQueryBuilder("userTitle")
+        .where("userTitle.pointsNeed <= :mysteryPoints", {
+          mysteryPoints: user.mystery_points,
+        })
+        .orderBy("userTitle.pointsNeed", "DESC")
+        .getOne();
   }
 }

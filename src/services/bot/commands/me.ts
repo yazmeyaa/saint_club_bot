@@ -11,7 +11,7 @@ import { CommandType } from ".";
 export const meCommand: CommandType = Composer.command(/^me/, async (ctx) => {
   const telegram_id = ctx.update.message.from.id;
 
-  const user = await userService.getOrCreateUser(telegram_id);
+  const user = await userService.getOrCreateUser(telegram_id.toString());
 
   if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);
   if (user.player_tag === null) return ctx.reply(NOT_LINKED_USER_MESSAGE);

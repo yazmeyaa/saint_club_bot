@@ -13,7 +13,7 @@ import { logger } from "@helpers/logs";
 export const profileCommand: CommandType = Composer.command(
   /^profile/,
   async (ctx) => {
-    const target_id = ctx.update.message.reply_to_message?.from?.id;
+    const target_id = ctx.update.message.reply_to_message?.from?.id.toString();
     if (
       typeof ctx.update.message === "undefined" ||
       typeof ctx.update.message.reply_to_message === "undefined" ||

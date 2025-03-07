@@ -15,7 +15,7 @@ export const linkCommand: CommandType = Composer.command(
   async (ctx) => {
     const [playerTag] = ctx.args;
 
-    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id);
+    const isAdminRequest = await checkIsAdmin(ctx.update.message.from.id.toString());
     if (!isAdminRequest) {
       await ctx.react("🖕");
       return;
@@ -37,7 +37,7 @@ export const linkCommand: CommandType = Composer.command(
     const targetId = ctx.update.message.reply_to_message.from.id;
 
     try {
-      const user = await userService.getOrCreateUser(targetId);
+      const user = await userService.getOrCreateUser(targetId.toString());
       user.player_tag = playerTag;
       await user.save();
       await userService.updateUserTrophies(user);

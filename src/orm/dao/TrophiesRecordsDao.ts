@@ -1,7 +1,7 @@
-import { AppDataSource } from "@orm/data-source";
-import { TrophiesRecord } from "@orm/models/TrophyRecord";
-import { UserTrophies } from "@orm/models/UserTrophy";
-import { Repository } from "typeorm";
+import {AppDataSource} from "@orm/data-source";
+import {TrophiesRecord} from "@orm/models/TrophyRecord";
+import {UserTrophies} from "@orm/models/UserTrophy";
+import {Repository} from "typeorm";
 
 export class TrophiesRecordsDao {
   private trophiesRecordsRepository: Repository<TrophiesRecord>;
@@ -20,9 +20,7 @@ export class TrophiesRecordsDao {
       trophies: trophies.day,
     });
 
-    const result = await record.save();
-
-    return result;
+    return await record.save();
   }
 
   public async getRecordsByPlayerTag(

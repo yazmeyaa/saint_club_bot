@@ -31,7 +31,7 @@ export async function initDatabase() {
   await AppDataSource.initialize();
   await fixEmptyTrophies();
 
-  const admin = await userService.getOrCreateUser(279603779);
+  const admin = await userService.getOrCreateUser("279603779");
   admin.admin = true;
 
   await admin.save();

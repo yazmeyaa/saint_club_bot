@@ -1,11 +1,7 @@
-import { UserDao } from "@orm/dao/UserDao";
-import { User } from "@orm/models/User";
-import { brawlStarsService } from "@services/brawl-stars/api";
-import {
-  BrawlStarsClub,
-  ClubMemberList,
-  PlayerRankingClub,
-} from "@services/brawl-stars/api/types";
+import {UserDao} from "@orm/dao/UserDao";
+import {User} from "@orm/models/User";
+import {brawlStarsService} from "@services/brawl-stars/api";
+import {BrawlStarsClub, ClubMemberList,} from "@services/brawl-stars/api/types";
 
 type GetClubMembersResponse = Promise<ClubMemberList | null>;
 type UserClubInfoResponse = Promise<BrawlStarsClub | null>;
@@ -22,7 +18,7 @@ type UserWithStats = {
 export class UserService {
   private userDao = new UserDao();
 
-  public async getUserClubInfo(telegram_id: number): UserClubInfoResponse {
+  public async getUserClubInfo(telegram_id: string): UserClubInfoResponse {
     const user = await this.userDao.getOrCreateUser(telegram_id);
     if (!user || !user.player_tag) return null;
 
@@ -42,7 +38,7 @@ export class UserService {
     return this.userDao.getAllLinkedUsers();
   }
 
-  public async getUserClubMembers(telegram_id: number): GetClubMembersResponse {
+  public async getUserClubMembers(telegram_id: string): GetClubMembersResponse {
     const club = await this.getUserClubInfo(telegram_id);
     if (!club) return null;
 
@@ -53,9 +49,8 @@ export class UserService {
     return members.items;
   }
 
-  public async getOrCreateUser(telegram_id: number): Promise<User> {
-    const user = await this.userDao.getOrCreateUser(telegram_id);
-    return user;
+  public async getOrCreateUser(telegram_id: string): Promise<User> {
+    return await this.userDao.getOrCreateUser(telegram_id);
   }
 
   public async updateUserTrophies(user: User): Promise<void> {
@@ -112,7 +107,7 @@ export class UserService {
     return { user, trophyChanges, club: playerData.club?.tag ?? null };
   }
 
-  public async removePlayerTag(telegram_id: number): Promise<void> {
+  public async removePlayerTag(telegram_id: string): Promise<void> {
     await this.userDao.removePlayerTag(telegram_id);
   }
 

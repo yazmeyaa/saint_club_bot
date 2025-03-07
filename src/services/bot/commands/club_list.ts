@@ -8,7 +8,7 @@ import { CommandType } from ".";
 export const clubListCommand: CommandType = Composer.command(
   /^club_list/,
   async (ctx) => {
-    const telegram_id = ctx.update.message.from.id;
+    const telegram_id = ctx.update.message.from.id.toString();
     const user = await userService.getOrCreateUser(telegram_id);
 
     if (!user) return ctx.reply(NOT_FOUND_USER_MESSAGE);

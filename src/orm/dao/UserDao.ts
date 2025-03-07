@@ -1,7 +1,7 @@
-import { AppDataSource } from "@orm/data-source";
-import { User } from "@orm/models/User";
-import { UserTrophies } from "@orm/models/UserTrophy";
-import { IsNull, Not, Repository } from "typeorm";
+import {AppDataSource} from "@orm/data-source";
+import {User} from "@orm/models/User";
+import {UserTrophies} from "@orm/models/UserTrophy";
+import {IsNull, Not, Repository} from "typeorm";
 
 type RemovePlayerTagResponse = Promise<User | null>;
 
@@ -12,7 +12,7 @@ export class UserDao {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  public async getOrCreateUser(telegram_id: number): Promise<User> {
+  public async getOrCreateUser(telegram_id: string): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { telegram_id },
     });
@@ -38,7 +38,7 @@ export class UserDao {
     return;
   }
 
-  public async removePlayerTag(telegram_id: number): RemovePlayerTagResponse {
+  public async removePlayerTag(telegram_id: string): RemovePlayerTagResponse {
     const user = await this.userRepository.findOneBy({ telegram_id });
     if (!user) return null;
 
@@ -77,10 +77,8 @@ export class UserDao {
   }
 
   public async getUserByPlayerTag(player_tag: string) {
-    const user = this.userRepository.findOne({
-      where: { player_tag },
+    return this.userRepository.findOne({
+      where: {player_tag},
     });
-
-    return user;
   }
 }

@@ -3,7 +3,6 @@ import { bot } from "@services/bot";
 import { brawlStarsComposer } from "@services/bot/commands";
 
 export async function initBot() {
-  await bot.launch();
   bot.use(brawlStarsComposer);
   bot.catch(async (error, ctx) => {
     await ctx.react("💩");
@@ -15,4 +14,5 @@ export async function initBot() {
     console.log(error);
     logger.error((error as Error).message);
   });
+  bot.launch();
 }

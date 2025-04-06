@@ -1,5 +1,5 @@
 version: '3.9'
-name: "bs_bot"
+name: "x-bs_bot"
 services:
   postgres:
     image: "postgres:17.4"

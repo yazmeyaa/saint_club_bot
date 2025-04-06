@@ -1,5 +1,4 @@
-version: '3.8'
-name: "x-bs_bot"
+name: "brawl_stars_bot"
 services:
   postgres:
     image: "postgres:17.4"

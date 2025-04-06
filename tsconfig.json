@@ -12,12 +12,13 @@
     "sourceMap": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": "src",
+    "outDir": "dist",
     "strict": true,
+    "tsBuildInfoFile": null,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./src",
+    "baseUrl": "src",
     "strictPropertyInitialization": false,
     "paths": {
       "@services/*": ["./services/*"],
@@ -25,7 +26,7 @@
       "@helpers/*": ["./helpers/*"],
       "@templates/*": ["./templates/*"],
       "@orm/*": ["./orm/*"],
-      "@modules/*": ["./modules/*"],
+      "@modules/*": ["./modules/*"]
     },
     "skipLibCheck": true
   },

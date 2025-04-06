@@ -12,4 +12,7 @@ async function startServer() {
   await initBot();
 }
 
-startServer();
+startServer().then(() =>{
+  console.log("Server started!");
+});
+
